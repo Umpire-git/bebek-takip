@@ -3,635 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BabyAI - Premium Bebek Takip Sistemi</title>
+    <title>BabyAI - Klinik Takip Terminali</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BabyAI">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    boxShadow: { 'premium': '0 10px 30px -3px rgba(0, 0, 0, 0.03)', 'card': '0 20px 40px -4px rgba(0, 0, 0, 0.04)' }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body { background-color: #F8F9FA; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; overflow-x: hidden; -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { display: none; }
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .smooth-transition { transition: all 0.4s ease-in-out; }
-        @keyframes floatCloud { 0% { transform: translateX(0px); } 50% { transform: translateX(12px); } 100% { transform: translateX(0px); } }
-        .animate-cloud { animation: floatCloud 5s ease-in-out infinite; }
-        /* Dinamik Halka Animasyon Sınıfı */
-        .ring-transition { transition: stroke-dashoffset 1s linear; }
+        .arc-container { position: relative; width: 100%; height: 200px; overflow: hidden; margin-top: 1rem; }
+        .arc-path { fill: none; stroke: #e2e8f0; stroke-width: 12; stroke-linecap: round; }
+        .log-point { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; items-center; justify-content: center; }
+        .icon-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .pulse-active { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse-ring { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
     </style>
 </head>
-<body class="flex justify-center min-h-screen bg-[#F8F9FA] dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+<body class="flex justify-center min-h-screen text-slate-800">
 
-    <div class="w-full max-w-md bg-[#F8F9FA] dark:bg-slate-950 flex flex-col min-h-screen relative pb-20 shadow-premium border-x border-slate-100/10">
+    <div class="w-full max-w-md bg-white flex flex-col min-h-screen relative pb-24 shadow-2xl border-x border-slate-100">
         
-        <!-- ================= SEKME 1: GÜNLÜK TAKİP ================= -->
-        <div id="dailyTab" class="tab-content active min-h-screen">
-            <header class="p-6 pt-8 pb-3">
-                <div id="statusCard" class="bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/10">
-                    
-                    <div class="absolute inset-0 pointer-events-none z-0">
-                        <div id="illuAwake" class="absolute inset-0" style="display: block; opacity: 1;">
-                            <i class="fa-solid fa-sun text-8xl text-amber-200/20 absolute -right-2 -top-2" style="animation: spin 25s linear infinite;"></i>
-                            <i class="fa-solid fa-cloud text-5xl text-white/10 absolute right-16 top-10 animate-cloud"></i>
-                            <i class="fa-solid fa-cloud text-3xl text-white/10 absolute left-6 top-4 animate-cloud" style="animation-delay: 2s;"></i>
-                            <div class="absolute bottom-0 left-0 right-0 h-4 bg-emerald-600/10 rounded-t-full"></div>
-                        </div>
-                        <div id="illuSleep" class="absolute inset-0" style="display: none; opacity: 0;">
-                            <i class="fa-solid fa-moon text-7xl text-indigo-200/20 absolute right-6 top-4"></i>
-                            <i class="fa-solid fa-star text-xs text-white/30 absolute left-12 top-6 animate-pulse"></i>
-                            <i class="fa-solid fa-star text-sm text-white/20 absolute right-24 top-12 animate-pulse"></i>
-                            <i class="fa-solid fa-star text-xs text-white/40 absolute left-24 top-20 animate-pulse"></i>
-                        </div>
-                    </div>
-
-                    <div class="z-10 w-full">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full w-max">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-white">Metrik Analiz</span>
-                                </div>
-                                <h2 id="statusTitle" class="text-3xl font-black mt-3 tracking-tight text-white">Uyanık</h2>
-                            </div>
-                            
-                            <!-- DİNAMİK GERİ SAYIM HALKASI (YENİ) -->
-                            <div id="countdownRingContainer" class="relative w-16 h-16 bg-white/10 rounded-full backdrop-blur-md border border-white/10 flex items-center justify-center shadow-sm hidden">
-                                <svg class="w-full h-full transform -rotate-90 absolute inset-0">
-                                    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" class="text-white/20" />
-                                    <circle id="sleepRing" cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="175.9" stroke-dashoffset="0" class="text-white ring-transition" />
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
-                                    <span id="countdownText" class="text-sm font-black tracking-tighter leading-none mt-1">--</span>
-                                    <span class="text-[7px] font-extrabold uppercase tracking-wider opacity-80 mt-0.5">dk kaldı</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Varsayılan İkon (Halka devre dışıyken görünür) -->
-                            <div id="defaultStatusIcon" class="bg-white/20 p-3 rounded-2xl shadow-sm backdrop-blur-md border border-white/10">
-                                <i id="statusIcon" class="fa-solid fa-sun text-2xl text-amber-300"></i>
-                            </div>
-
-                        </div>
-                        <p id="statusDesc" class="text-xs text-white/90 mt-4 font-semibold leading-relaxed bg-black/10 p-3 rounded-2xl backdrop-blur-sm">
-                            Sistem aktif hale getirildi. Veritabanı senkronizasyonu devrede.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-[11px] text-white/80 font-bold z-10">
-                        <span id="nextActionTime" class="flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> Sonraki Uyku: Veri Bekleniyor...</span>
-                        <span id="lastEventTime">Son Giriş: --:--</span>
-                    </div>
+        <!-- ÜST BİLGİ VE ATAK HAFTASI ÇUBUĞU -->
+        <div class="px-6 pt-12 pb-4 bg-white border-b border-slate-100 flex justify-between items-center sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-200">
+                    <i class="fa-solid fa-baby text-2xl text-slate-400"></i>
                 </div>
-            </header>
-
-            <section class="px-6 mb-4">
-                <div class="bg-white border dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-premium">
-                    <div class="flex justify-between items-center mb-3">
-                        <h4 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Bugünün Gelişim Notu & Trikler</h4>
-                        <span id="babyAgeBadge" class="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-[10px] font-black px-2.5 py-1 rounded-lg">--</span>
-                    </div>
-                    <div class="flex gap-3 items-start">
-                        <div class="p-3 bg-purple-50 dark:bg-purple-950/60 rounded-2xl text-purple-600 dark:text-purple-400 shrink-0"><i class="fa-solid fa-wand-magic-sparkles text-lg"></i></div>
-                        <div>
-                            <h5 id="milestoneTitle" class="font-bold text-sm text-slate-800 dark:text-slate-200">Hesaplanıyor...</h5>
-                            <p id="milestoneDesc" class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Veriler işleniyor.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="px-6 mb-6">
-                <h3 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 mb-3 uppercase tracking-wider">Hızlı Kayıt</h3>
-                <div class="grid grid-cols-3 gap-4">
-                    <button onclick="openSleepModal()" class="active:scale-95 smooth-transition bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-3xl flex flex-col items-center justify-center shadow-premium group">
-                        <div class="w-14 h-14 bg-indigo-50/70 dark:bg-indigo-950/30 rounded-2xl flex items-center justify-center text-indigo-500 dark:text-indigo-400 mb-2"><i class="fa-solid fa-moon text-xl"></i></div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-tight">Uyku Takibi</span>
-                    </button>
-                    <button onclick="openModal('feedingModal')" class="active:scale-95 smooth-transition bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-3xl flex flex-col items-center justify-center shadow-premium group">
-                        <div class="w-14 h-14 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl flex items-center justify-center text-emerald-500 dark:text-emerald-400 mb-2"><i class="fa-solid fa-bottle-droplet text-xl"></i></div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-tight">Beslenme</span>
-                    </button>
-                    <button onclick="openModal('diaperModal')" class="active:scale-95 smooth-transition bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-3xl flex flex-col items-center justify-center shadow-premium group">
-                        <div class="w-14 h-14 bg-amber-50/70 dark:bg-amber-950/30 rounded-2xl flex items-center justify-center text-amber-500 dark:text-amber-400 mb-2"><i class="fa-solid fa-toilet-paper text-xl"></i></div>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 tracking-tight">Bez Değişimi</span>
-                    </button>
-                </div>
-            </section>
-
-            <section class="flex-1 px-6 mb-6 flex flex-col">
-                <h3 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">Cihazdaki Son 10 Kayıt</h3>
-                <div id="logList" class="space-y-3 max-h-[160px] overflow-y-auto pr-1 no-scrollbar flex-1"></div>
-            </section>
-        </div>
-
-        <!-- ================= SEKME 2: SAĞLIK VE AŞILAR ================= -->
-        <div id="healthTab" class="tab-content min-h-screen">
-            <header class="p-6 pt-8 pb-4">
-                <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Sağlık & Gelişim</h2>
-                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Aşı takvimi ve doktor kontrolleri</p>
-            </header>
-            <main class="flex-1 px-6 space-y-6">
-                <div class="bg-white border dark:bg-slate-900 border-slate-100 dark:border-slate-800 p-5 rounded-[2rem] shadow-premium space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2"><i class="fa-solid fa-user-md text-rose-500 bg-rose-50 dark:bg-rose-950/40 p-2 rounded-xl"></i> Doktor Muayenesi</h3>
-                        <button onclick="openDoctorModal()" class="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-2 rounded-xl active:scale-95 smooth-transition">Kayıt Ekle</button>
-                    </div>
-                    <p class="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">Fiziksel gelişim notlarını kalıcı olarak arşivleyebilirsiniz.</p>
-                </div>
-                <div class="space-y-3">
-                    <h3 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Aşı Takvimi</h3>
-                    <div id="vaccineList" class="space-y-3 max-h-[350px] overflow-y-auto pr-1 no-scrollbar"></div>
-                </div>
-            </main>
-        </div>
-
-        <!-- ================= SEKME 3: AI ASİSTAN (CHATBOT) ================= -->
-        <div id="aiTab" class="tab-content min-h-screen">
-            <header class="p-6 pt-8 pb-3 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-between items-center transition-colors duration-300">
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">BabyAI Asistan</h2>
-                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Klinik veri tabanlı özel danışman</p>
+                    <h1 class="font-black text-xl tracking-tight">Bebek Takibi</h1>
+                    <p id="babyAgeText" class="text-xs font-bold text-slate-400">--</p>
                 </div>
-                <button onclick="clearChat()" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 p-2 bg-slate-50 dark:bg-slate-800 rounded-xl"><i class="fa-solid fa-trash-can text-md"></i></button>
-            </header>
-            <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[calc(100vh-290px)] no-scrollbar bg-slate-50/50 dark:bg-slate-950/40"></div>
-            <div class="px-6 py-2 overflow-x-auto flex gap-2 no-scrollbar bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-slate-800 shrink-0 transition-colors duration-300">
-                <button onclick="quickAsk('Genel gelişim analizi yapar mısın?')" class="shrink-0 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-2 rounded-xl border border-purple-100/50 dark:border-purple-900/50 active:scale-95 smooth-transition">📊 Gelişim Analizi</button>
-                <button onclick="quickAsk('Ek gıdaya geçiş sürecinde dikkat etmem gerekenler neler? Tarif verir misin?')" class="shrink-0 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-3 py-2 rounded-xl border border-emerald-100/50 dark:border-emerald-900/50 active:scale-95 smooth-transition">🥦 Ek Gıda Rehberi</button>
-                <button onclick="quickAsk('Son uyku verilerine göre uyku düzenimizi yorumlar mısın?')" class="shrink-0 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-2 rounded-xl border border-indigo-100/50 dark:border-indigo-900/50 active:scale-95 smooth-transition">😴 Uyku Düzeni</button>
             </div>
-            <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2 items-center shrink-0 transition-colors duration-300">
-                <input id="chatInput" type="text" placeholder="Asistana medikal veya gelişim sorusu yöneltin..." class="flex-1 p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-purple-500/20">
-                <button onclick="sendChatMessage()" class="w-11 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center shadow-md active:scale-95 shrink-0"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+            <button onclick="switchTab('info')" class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-500 active:scale-95"><i class="fa-solid fa-clipboard-user"></i></button>
+        </div>
+
+        <!-- ATAK HAFTASI UYARISI -->
+        <div id="wonderWeekAlert" class="hidden bg-rose-50 border-y border-rose-100 p-3 px-6 flex items-start gap-3">
+            <i class="fa-solid fa-bolt text-rose-500 mt-0.5"></i>
+            <div>
+                <h4 id="wwTitle" class="text-xs font-black text-rose-700 uppercase tracking-tight">Atak Haftası Aktif</h4>
+                <p id="wwDesc" class="text-[10px] text-rose-600 font-medium leading-tight mt-1"></p>
             </div>
         </div>
+
+        <!-- ================= SEKME 1: ANA TAKİP (ARC) ================= -->
+        <div id="dailyTab" class="tab-content active flex-1">
+            
+            <!-- ARC (Yarım Çember) ZAMAN ÇİZELGESİ -->
+            <div class="bg-white pt-4 pb-8 flex flex-col items-center border-b border-slate-100">
+                <div class="arc-container" id="arcContainer">
+                    <svg viewBox="0 0 300 150" class="w-full h-full">
+                        <path d="M 30,140 A 120,120 0 0,1 270,140" class="arc-path" />
+                    </svg>
+                    <div id="arcPoints"></div>
+                </div>
+                
+                <div class="text-center -mt-10 z-10 bg-white px-8 rounded-full py-2">
+                    <p id="mainTimerLabel" class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Durum</p>
+                    <h2 id="mainTimerValue" class="text-4xl font-black tracking-tighter text-slate-800">--:--</h2>
+                    <p id="nextSleepLocal" class="text-[10px] font-bold text-indigo-500 mt-2 bg-indigo-50 px-3 py-1 rounded-full hidden">Tahmini Uyku: --:--</p>
+                </div>
+
+                <!-- HIZLI AKSİYON BUTONLARI -->
+                <div class="flex gap-4 mt-8">
+                    <button onclick="toggleSleep()" class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl shadow-sm border border-indigo-100 active:scale-90 transition-transform"><i id="sleepBtnIcon" class="fa-solid fa-moon"></i></button>
+                    <button onclick="openModal('feedingModal')" class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl shadow-sm border border-emerald-100 active:scale-90 transition-transform"><i class="fa-solid fa-droplet"></i></button>
+                    <button onclick="openModal('diaperModal')" class="w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-sm border border-amber-100 active:scale-90 transition-transform"><i class="fa-solid fa-baby-carriage"></i></button>
+                </div>
+            </div>
+
+            <!-- SON KAYITLAR VE DÜZENLEME -->
+            <div class="p-6 flex-1 bg-slate-50">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Son 24 Saat</h3>
+                </div>
+                <div id="logList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- ================= SEKME 2: BEBEK BİLGİLERİ VE AŞILAR ================= -->
+        <div id="infoTab" class="tab-content min-h-screen bg-slate-50">
+            <div class="p-6 space-y-6">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Biyometrik Veriler</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">İsim</span><span class="text-sm font-black">Ali Kuzey</span></div>
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">Doğum Tarihi</span><span class="text-sm font-black">17 Nisan 2026</span></div>
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">Kan Grubu</span><span class="text-sm font-black">Bilinmiyor</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Kapsamlı Aşı Takvimi</h3>
+                    </div>
+                    <div id="vaccineList" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SEKME 3: AI KLİNİK ANALİZ ================= -->
+        <div id="aiTab" class="tab-content min-h-screen flex flex-col bg-slate-50">
+            <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+            <div class="p-4 bg-white border-t border-slate-100 flex gap-2 items-center">
+                <input id="chatInput" type="text" placeholder="Klinik soru yöneltin..." class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-indigo-300">
+                <button onclick="sendChatMessage()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center active:scale-95"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- ALT NAVİGASYON -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 h-20 flex justify-around items-center z-40 max-w-md mx-auto px-2">
+            <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="daily"><i class="fa-solid fa-chart-pie text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Panel</span></button>
+            <button onclick="switchTab('info')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="info"><i class="fa-solid fa-syringe text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Sağlık</span></button>
+            <button onclick="switchTab('ai')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="ai"><i class="fa-solid fa-brain text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Analiz</span></button>
+        </nav>
 
         <!-- ================= MODALLER ================= -->
-        <div id="sleepModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 border-t border-white dark:border-slate-800 transition-colors duration-300">
-                <div class="flex justify-between items-center"><h3 id="sleepModalTitle" class="text-lg font-black text-slate-800 dark:text-slate-200">Uyku Kaydı</h3><button onclick="closeModal('sleepModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
-                <input id="sleepTime" type="time" class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-300">
-                <button id="sleepSubmitBtn" onclick="executeSleepToggle()" class="w-full bg-blue-600 dark:bg-blue-700 text-white font-bold p-4 rounded-2xl text-sm shadow-md smooth-transition">Kaydet</button>
-            </div>
-        </div>
+        
+        <!-- Beslenme Arka Plan Sayacı Modalı -->
+        <div id="feedingModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end justify-center z-50">
+            <div class="bg-white w-full rounded-t-[2rem] p-6 space-y-5 transform transition-transform">
+                <div class="flex justify-between items-center"><h3 class="text-lg font-black">Beslenme Takibi</h3><button onclick="closeModal('feedingModal')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button></div>
+                
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 text-center">
+                    <h4 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2">Emzirme Sayacı</h4>
+                    <div id="nursingTimerDisplay" class="text-4xl font-black text-emerald-700 mb-4 font-mono">00:00</div>
+                    <div class="flex gap-2">
+                        <button id="nursingStartBtn" onclick="startNursingTimer()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl active:scale-95">Başlat</button>
+                        <button id="nursingStopBtn" onclick="stopNursingTimer()" class="flex-1 bg-rose-500 text-white font-bold py-3 rounded-xl hidden active:scale-95">Bitir & Kaydet</button>
+                    </div>
+                </div>
 
-        <div id="feedingModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-4 border-t border-white dark:border-slate-800 transition-colors duration-300">
-                <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Beslenme Girişi</h3><button onclick="closeModal('feedingModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-880 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Beslenme Zamanı</label>
-                        <input id="feedingTime" type="time" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Beslenme Tipi</label>
-                        <select id="feedingType" onchange="toggleFeedingInputs()" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300 focus:outline-none">
-                            <option value="Sol Meme">Sol Meme (Anne Sütü)</option>
-                            <option value="Sağ Meme">Sağ Meme (Anne Sütü)</option>
-                            <option value="Mama">Mama (Formül)</option>
-                        </select>
-                    </div>
-                    <div id="breastDurationGroup">
-                        <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Emzirme Süresi (Dakika)</label>
-                        <input id="feedingDuration" type="number" placeholder="Örn: 12" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300">
-                    </div>
-                    <div id="formulaAmountGroup" style="display: none;">
-                        <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Mama Miktarı (cc / ml)</label>
-                        <input id="feedingAmount" type="number" placeholder="Örn: 90" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300">
-                    </div>
-                    <button onclick="executeFeedingSave()" class="w-full bg-emerald-600 dark:bg-emerald-700 text-white font-bold p-4 rounded-2xl text-sm shadow-md active:scale-95 smooth-transition">Beslenmeyi Kaydet</button>
+                <div class="relative flex items-center py-2"><div class="flex-grow border-t border-slate-200"></div><span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold">VEYA MAMA GİRİŞİ</span><div class="flex-grow border-t border-slate-200"></div></div>
+
+                <div class="flex gap-3">
+                    <input id="formulaAmount" type="number" placeholder="Miktar (cc)" class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold">
+                    <button onclick="saveFormula()" class="w-24 bg-slate-800 text-white font-bold rounded-2xl active:scale-95">Kaydet</button>
                 </div>
             </div>
         </div>
 
-        <div id="diaperModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 border-t border-white dark:border-slate-800 transition-colors duration-300">
-                <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Bez Değişimi</h3><button onclick="closeModal('diaperModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
-                <input id="diaperTime" type="time" class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold text-gray-700 dark:text-slate-300">
-                <div class="grid grid-cols-3 gap-3">
-                    <button onclick="saveDiaper('Çiş')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Sadece Çiş</button>
-                    <button onclick="saveDiaper('Kaka (Sarı)')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Sarı)</button>
-                    <button onclick="saveDiaper('Kaka (Yeşil)')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Yeşil)</button>
+        <!-- Klinik Kaka Renk Modalı -->
+        <div id="diaperModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end justify-center z-50">
+            <div class="bg-white w-full rounded-t-[2rem] p-6 space-y-5">
+                <div class="flex justify-between items-center"><h3 class="text-lg font-black">Klinik Dışkı Analizi</h3><button onclick="closeModal('diaperModal')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button></div>
+                
+                <button onclick="saveDiaper('Sadece Çiş', 'blue')" class="w-full bg-blue-50 text-blue-700 border border-blue-200 font-black p-4 rounded-2xl mb-4">Sadece Çiş / Islak</button>
+                
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kaka Renk Skalası</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Normal Renkler -->
+                    <button onclick="saveDiaper('Hardal Sarısı', 'amber')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-amber-400 shadow-inner"></div><span class="text-xs font-bold">Hardal / Sarı<br><span class="text-[9px] text-slate-400">Normal (Anne Sütü)</span></span></button>
+                    <button onclick="saveDiaper('Açık Yeşil', 'lime')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-lime-400 shadow-inner"></div><span class="text-xs font-bold">Açık Yeşil<br><span class="text-[9px] text-slate-400">Ön süt ağırlıklı</span></span></button>
+                    <button onclick="saveDiaper('Koyu Yeşil', 'green')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-emerald-700 shadow-inner"></div><span class="text-xs font-bold">Koyu Yeşil<br><span class="text-[9px] text-slate-400">Demir takviyesi</span></span></button>
+                    <button onclick="saveDiaper('Turuncu / Kahve', 'orange')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-orange-600 shadow-inner"></div><span class="text-xs font-bold">Kahverengi<br><span class="text-[9px] text-slate-400">Normal (Mama/Ek gıda)</span></span></button>
+                    
+                    <!-- Klinik Uyarı Renkleri -->
+                    <button onclick="saveDiaper('Kırmızı (Kanlı)', 'rose', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-rose-600 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Kırmızı<br><span class="text-[9px]">Alerji / Çatlak</span></span></button>
+                    <button onclick="saveDiaper('Siyah (Melena)', 'slate', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-slate-900 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Siyah<br><span class="text-[9px]">Üst GİS kanama</span></span></button>
+                    <button onclick="saveDiaper('Gri / Beyaz', 'gray', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-gray-300 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Beyaz / Gri<br><span class="text-[9px]">Safra tıkanıklığı</span></span></button>
                 </div>
             </div>
         </div>
 
-        <div id="doctorModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-4 border-t border-white dark:border-slate-800 transition-colors duration-300">
-                <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Doktor Muayenesi</h3><button onclick="closeModal('doctorModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Muayene Tarihi</label>
-                        <input id="doctorDateInput" type="date" class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300 focus:outline-none">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input id="docHeight" type="number" placeholder="Boy (cm)" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold focus:outline-none">
-                        <input id="docWeight" type="number" placeholder="Kilo (gr)" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold focus:outline-none">
-                    </div>
-                    <textarea id="docNotes" placeholder="Doktor notları, tanı veya tıbbi öneriler..." class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-xs h-24 focus:outline-none"></textarea>
-                    <button onclick="saveDoctorVisit()" class="w-full bg-rose-500 dark:bg-rose-600 text-white font-bold p-4 rounded-2xl text-sm shadow-md">Muayeneyi Kaydet</button>
-                </div>
-            </div>
-        </div>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 h-20 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-3xl shadow-lg transition-colors duration-300">
-            <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center text-slate-400 w-16 h-12"><i id="navDailyIcon" class="fa-solid fa-baby text-lg text-blue-500"></i><span id="navDailyText" class="text-[9px] font-extrabold mt-1 text-blue-600 uppercase tracking-tight">Günlük</span></button>
-            <button onclick="switchTab('health')" class="flex flex-col items-center justify-center text-slate-400 w-16 h-12"><i id="navHealthIcon" class="fa-solid fa-heart-pulse text-lg"></i><span id="navHealthText" class="text-[9px] font-extrabold mt-1 uppercase tracking-tight">Sağlık</span></button>
-            <button onclick="switchTab('ai')" class="flex flex-col items-center justify-center text-slate-400 w-16 h-12"><i id="navAiIcon" class="fa-solid fa-comments text-lg"></i><span id="navAiText" class="text-[9px] font-extrabold mt-1 uppercase tracking-tight">AI Asistan</span></button>
-        </nav>
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6PQenUg6dxxvQpoxEA7cPvPIrLMxkXQdJY3v-SQWHoA6N-6zotCeeHYcfRu33BMq-/exec"; 
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3ZJ1YHcK53uoc9YeRg69fD5Z4zIzScDhwtoVAS7OHzUBt0_YJVeP5JLQ_nu_eodai/exec"; 
         const BABY_BIRTH_DATE = "2026-04-17"; 
 
-        let localLogs = [];
-        try { localLogs = JSON.parse(localStorage.getItem('baby_logs')) || []; } 
-        catch (e) { localLogs = []; localStorage.removeItem('baby_logs'); }
-        
-        let state = { isSleeping: false, logs: localLogs, chatHistory: [], nextSleepTime: null };
-        let countdownTimer = null;
+        let state = { logs: JSON.parse(localStorage.getItem('baby_logs')) || [], chatHistory: [], isSleeping: false, sleepStartTime: null };
+        let uiInterval;
+        let nursingInterval;
 
-        const DEV_TRICKS = {
-            11: { title: "Sosyal Gülücükler", text: "Trik: Yüzünüzü 20-30 cm yaklaştırıp konuşun, taklitler yapın." },
-            12: { title: "Ellerin Keşfi", text: "Trik: Avucuna hafif çıngıraklar yerleştirerek kavrama refleksini destekleyin." },
-            13: { title: "Baş Kontrolü", text: "Trik: Günde 3-4 kez, 5'er dakika tummy time yaptırın." }
-        };
-
-        const VACCINE_CALENDAR = [
-            { id: 1, month: 0, name: "Hepatit B (1. Doz)", desc: "Doğumda hastanede uygulanır.", isPrivate: false },
-            { id: 2, month: 1, name: "Hepatit B (2. Doz)", desc: "1. ayın sonunda aile hekimliğinde.", isPrivate: false },
-            { id: 3, month: 2, name: "BCG (Verem)", desc: "2. ayın sonunda verem savaşı dispanserinde.", isPrivate: false },
-            { id: 4, month: 2, name: "DaBT-İPA-Hib (1. Doz)", desc: "Beşli karma aşı.", isPrivate: false },
-            { id: 5, month: 2, name: "KPA (Zatürre 1. Doz)", desc: "Konjuge pnömokok aşısı.", isPrivate: false }
-        ];
-
-        function calculateAgeAndTricks() {
-            const birth = new Date(BABY_BIRTH_DATE), now = new Date();
-            const diffDays = Math.floor(Math.abs(now - birth) / (1000 * 60 * 60 * 24)), diffWeeks = Math.floor(diffDays / 7);
-            document.getElementById('babyAgeBadge').innerText = `${diffDays} Günlük (${diffWeeks} Haftalık)`;
-            const trick = DEV_TRICKS[diffWeeks] || { title: "Gelişim Evresi", text: "Motor kas gelişimi için tummy time sürelerini takip edin." };
-            document.getElementById('milestoneTitle').innerText = trick.title;
-            document.getElementById('milestoneDesc').innerText = trick.text;
-        }
-
-        function setDefaultTime(id) {
+        // --- VERİ MİMARİSİ VE SENKRONİZASYON ---
+        async function saveLog(type, title) {
             const now = new Date();
-            document.getElementById(id).value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            ['Daily', 'Health', 'Ai'].forEach(t => {
-                document.getElementById(`nav${t}Icon`).className = `fa-solid ${t==='Daily'?'fa-baby':t==='Health'?'fa-heart-pulse':'fa-comments'} text-lg text-slate-400`;
-                document.getElementById(`nav${t}Text`).className = "text-[9px] font-extrabold mt-1 text-slate-400 uppercase tracking-tight";
-            });
-            const activeColor = tabName === 'daily' ? 'text-blue-500' : tabName === 'health' ? 'text-rose-500' : 'text-purple-500';
-            const activeText = tabName === 'daily' ? 'text-blue-600' : tabName === 'health' ? 'text-rose-600' : 'text-purple-600';
+            const logId = now.getTime().toString();
+            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
             
-            document.getElementById(`${tabName}Tab`).classList.add('active');
-            document.getElementById(`nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Icon`).classList.add(activeColor);
-            document.getElementById(`nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Text`).classList.add(activeText);
-            if(tabName === 'health') renderVaccines();
-            if(tabName === 'ai' && state.chatHistory.length === 0) resetChatUI();
-        }
-
-        function renderVaccines() {
-            const list = document.getElementById('vaccineList'); list.innerHTML = '';
-            const diffMonths = (new Date().getFullYear() - new Date(BABY_BIRTH_DATE).getFullYear()) * 12 + new Date().getMonth() - new Date(BABY_BIRTH_DATE).getMonth();
-            
-            VACCINE_CALENDAR.forEach(vac => {
-                const statusClass = vac.month <= diffMonths ? "bg-emerald-50/30 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-900 dark:text-emerald-300" : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500";
-                const badge = vac.month <= diffMonths ? `<span class="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-1 rounded-lg">Zamanı Geldi</span>` : `<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold px-2 py-1 rounded-lg">Bekliyor</span>`;
-                const div = document.createElement('div');
-                div.className = `p-4 rounded-3xl border ${statusClass} flex justify-between items-center shadow-premium transition-colors duration-300`;
-                div.innerHTML = `<div class="flex-1 pr-3"><div><span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">${vac.month}. Ay Aşısı</span></div><h4 class="font-extrabold text-sm text-slate-800 dark:text-slate-200">${vac.name}</h4><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">${vac.desc}</p></div><div class="shrink-0">${badge}</div>`;
-                list.appendChild(div);
-            });
-        }
-
-        async function fetchLogs() {
-            try {
-                const response = await fetch(APPS_SCRIPT_URL);
-                const cloudLogs = await response.json();
-                if (Array.isArray(cloudLogs)) {
-                    state.logs = cloudLogs.slice(-10);
-                    localStorage.setItem('baby_logs', JSON.stringify(state.logs));
-                    updateUI();
-                }
-            } catch (e) { console.error("Senkronizasyon hatası:", e); }
-        }
-
-        // ================= DİNAMİK HALKA (RING) HESAPLAMA MOTORU =================
-        function startCountdownRing(targetTimeStr) {
-            clearInterval(countdownTimer);
-            const ringContainer = document.getElementById('countdownRingContainer');
-            const defaultIcon = document.getElementById('defaultStatusIcon');
-            
-            // Eğer veri yoksa veya bebek zaten uykudaysa halkayı gizle
-            if (!targetTimeStr || targetTimeStr.includes('--') || state.isSleeping) {
-                ringContainer.classList.add('hidden');
-                defaultIcon.classList.remove('hidden');
-                return;
-            }
-
-            // Halkayı görünür yap
-            ringContainer.classList.remove('hidden');
-            defaultIcon.classList.add('hidden');
-
-            const [targetHour, targetMinute] = targetTimeStr.split(':').map(Number);
-            const ring = document.getElementById('sleepRing');
-            const text = document.getElementById('countdownText');
-            const totalRingLength = 175.9; // Çember çevresi (2 * pi * r)
-
-            countdownTimer = setInterval(() => {
-                const now = new Date();
-                const target = new Date();
-                target.setHours(targetHour, targetMinute, 0, 0);
-
-                // Eğer hedef saat bugünün geçmişindeyse yarına ayarla
-                if (target < now && (now.getHours() - targetHour) > 2) {
-                    target.setDate(target.getDate() + 1);
-                }
-
-                const diffMs = target - now;
-                const diffMins = Math.ceil(diffMs / 60000);
-
-                if (diffMins <= 0) {
-                    text.innerText = "0";
-                    text.classList.add("text-rose-500");
-                    ring.style.strokeDashoffset = totalRingLength; // Tamamen boş
-                    ring.classList.replace('text-white', 'text-rose-500');
-                    clearInterval(countdownTimer);
-                } else {
-                    text.innerText = diffMins;
-                    text.classList.remove("text-rose-500");
-                    ring.classList.replace('text-rose-500', 'text-white');
-                    
-                    // Maksimum uyanıklık süresini 120 dakika kabul ederek yüzde hesaplama
-                    const percentage = Math.min(100, Math.max(0, (diffMins / 120) * 100));
-                    const offset = totalRingLength - (totalRingLength * (percentage / 100));
-                    ring.style.strokeDashoffset = offset;
-                }
-            }, 1000);
-        }
-
-        function syncSleepCardVisuals() {
-            const sleepLogs = state.logs.filter(l => l.type === 'sleep');
-            if (sleepLogs.length > 0) {
-                const lastSleepLog = sleepLogs[sleepLogs.length - 1];
-                state.isSleeping = lastSleepLog.title.includes('Uyudu');
-            } else { state.isSleeping = false; }
-
-            const card = document.getElementById('statusCard'), title = document.getElementById('statusTitle');
-            const awakeIllu = document.getElementById('illuAwake'), sleepIllu = document.getElementById('illuSleep');
-
-            if (state.isSleeping) {
-                card.className = "bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 text-slate-100 rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/5";
-                title.innerText = "Uykuda"; 
-                awakeIllu.style.display = 'none'; awakeIllu.style.opacity = '0';
-                sleepIllu.style.display = 'block'; sleepIllu.style.opacity = '1';
-                startCountdownRing(null); // Uykudayken halkayı kapat
-            } else {
-                card.className = "bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/10";
-                title.innerText = "Uyanık"; 
-                sleepIllu.style.display = 'none'; sleepIllu.style.opacity = '0';
-                awakeIllu.style.display = 'block'; awakeIllu.style.opacity = '1';
-                if(state.nextSleepTime) startCountdownRing(state.nextSleepTime);
-            }
-        }
-
-        function updateUI() {
-            const list = document.getElementById('logList'); list.innerHTML = '';
-            if (state.logs.length === 0) { list.innerHTML = '<div class="text-center text-slate-400 text-xs py-8">Kayıt bulunamadı.</div>'; return; }
-            
-            state.logs.slice().reverse().forEach(log => {
-                const div = document.createElement('div');
-                div.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl flex justify-between items-center shadow-premium transition-colors duration-300";
-                div.innerHTML = `<div class="flex items-center gap-3"><div class="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl text-slate-600 dark:text-slate-400"><i class="${getIcon(log.type)}"></i></div><div><span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">${log.title}</span><p class="text-[10px] font-bold text-slate-400 mt-0.5">${log.time}</p></div></div><span class="text-[10px] font-black text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 px-2 py-1 rounded-md">${log.date}</span>`;
-                list.appendChild(div);
-            });
-            if (state.logs[state.logs.length - 1]) document.getElementById('lastEventTime').innerText = `Son Giriş: ${state.logs[state.logs.length - 1].time}`;
-            
-            syncSleepCardVisuals();
-        }
-
-        function getIcon(type) {
-            if (type === 'sleep') return 'fa-solid fa-moon text-indigo-500';
-            if (type === 'feed') return 'fa-solid fa-bottle-droplet text-emerald-500';
-            if (type === 'doctor') return 'fa-solid fa-user-md text-rose-500';
-            return 'fa-solid fa-toilet-paper text-amber-500';
-        }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); if(id!=='sleepModal'&&id!=='doctorModal'&&id!=='feedingModal') setDefaultTime(id+'Time'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        
-        function openSleepModal() { 
-            openModal('sleepModal'); 
-            setDefaultTime('sleepTime'); 
-            const btn = document.getElementById('sleepSubmitBtn');
-            const title = document.getElementById('sleepModalTitle');
-            if (state.isSleeping) {
-                title.innerText = "Uyanma Kaydı"; btn.innerText = "Bebeği Uyandır";
-            } else {
-                title.innerText = "Uyku Kaydı"; btn.innerText = "Bebeği Uyut";
-            }
-        }
-        
-        function openDoctorModal() { 
-            openModal('doctorModal'); 
-            document.getElementById('doctorDateInput').value = new Date().toISOString().split('T')[0];
-        }
-
-        function toggleFeedingInputs() {
-            const type = document.getElementById('feedingType').value;
-            if (type === 'Mama') {
-                document.getElementById('formulaAmountGroup').style.display = 'block';
-                document.getElementById('breastDurationGroup').style.display = 'none';
-            } else {
-                document.getElementById('formulaAmountGroup').style.display = 'none';
-                document.getElementById('breastDurationGroup').style.display = 'block';
-            }
-        }
-
-        function executeFeedingSave() {
-            const time = document.getElementById('feedingTime').value;
-            const type = document.getElementById('feedingType').value;
-            let logTitle = "";
-
-            if (type === 'Mama') {
-                const amount = document.getElementById('feedingAmount').value.trim();
-                if (!amount) { alert("Lütfen formül mama miktarını cc olarak belirtiniz."); return; }
-                logTitle = `Mama Tüketimi (${amount} cc)`;
-            } else {
-                const duration = document.getElementById('feedingDuration').value.trim();
-                if (!duration) { alert("Lütfen emzirme süresini dakika olarak belirtiniz."); return; }
-                logTitle = `${type} Emzirme (${duration} dk)`;
-            }
-
-            saveLog('feed', logTitle, time);
-            closeModal('feedingModal');
-            document.getElementById('feedingAmount').value = '';
-            document.getElementById('feedingDuration').value = '';
-        }
-
-        async function saveLog(type, title, customTime, customDate) {
-            const now = new Date(), dateStr = customDate || now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }), finalTime = customTime || now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-            
-            state.logs.push({ type, title, time: finalTime, date: dateStr });
-            if (state.logs.length > 10) state.logs = state.logs.slice(-10);
+            const newLog = { id: logId, type, title, time: timeStr, date: dateStr, timestamp: now.getTime() };
+            state.logs.push(newLog);
             localStorage.setItem('baby_logs', JSON.stringify(state.logs));
-            updateUI();
             
-            document.getElementById('statusDesc').innerText = "Veritabanı senkronize ediliyor...";
+            renderLogs(); renderArcTimeline(); calculateLocalSleep();
 
             const params = new URLSearchParams();
             params.append("action", "save_log");
-            params.append("type", type);
-            params.append("title", title);
-            params.append("time", finalTime);
-            params.append("date", dateStr);
-
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
-                const resData = await response.json();
-                
-                if(resData.status === "success") { 
-                    await fetchLogs();
-                    await analyzeWithAI();
-                } else { 
-                    document.getElementById('statusDesc').innerText = "Kayıt sunucu tarafından reddedildi."; 
-                }
-            } catch (e) { 
-                console.error("Kayıt hatası:", e); 
-                document.getElementById('statusDesc').innerText = "Yerel kayıt başarılı, bulut bağlantısı askıda.";
-            }
+            params.append("id", logId); params.append("type", type);
+            params.append("title", title); params.append("time", timeStr); params.append("date", dateStr);
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params }).catch(e => console.error("Bulut senkronizasyonu başarısız:", e));
         }
 
-        function executeSleepToggle() {
-            const customTime = document.getElementById('sleepTime').value;
-            if (state.isSleeping) { saveLog('sleep', 'Bebek Uyandı', customTime); } 
-            else { saveLog('sleep', 'Bebek Uyudu', customTime); }
-            closeModal('sleepModal');
-        }
+        function deleteLog(id) {
+            if(!confirm("Klinik kaydı silmek istediğinize emin misiniz?")) return;
+            state.logs = state.logs.filter(l => l.id !== id);
+            localStorage.setItem('baby_logs', JSON.stringify(state.logs));
+            renderLogs(); renderArcTimeline(); calculateLocalSleep();
 
-        function saveDoctorVisit() {
-            const dateVal = document.getElementById('doctorDateInput').value;
-            const h = document.getElementById('docHeight').value.trim(), w = document.getElementById('docWeight').value.trim(), notes = document.getElementById('docNotes').value.trim();
-            if (!dateVal || (!h && !w && !notes)) return;
-            
-            const formattedDate = new Date(dateVal).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
-            let logTitle = `Muayene (Boy: ${h || '--'} cm, Kilo: ${w || '--'} gr)`;
-            if (notes) logTitle += ` - Not: ${notes}`;
-
-            saveLog('doctor', logTitle, "--:--", formattedDate);
-            closeModal('doctorModal');
-            document.getElementById('docHeight').value = ''; document.getElementById('docWeight').value = ''; document.getElementById('docNotes').value = '';
-        }
-
-        async function analyzeWithAI() {
-            if (state.logs.length === 0) return;
-            
             const params = new URLSearchParams();
-            params.append("action", "predict_sleep");
+            params.append("action", "delete_log"); params.append("id", id);
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
+        }
 
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
-                const result = await response.json();
+        // --- ARC (YARIM ÇEMBER) ZAMAN ÇİZELGESİ MATEMATİĞİ ---
+        function renderArcTimeline() {
+            const container = document.getElementById('arcPoints');
+            container.innerHTML = '';
+            
+            const now = new Date().getTime();
+            const twelveHoursAgo = now - (12 * 60 * 60 * 1000);
+            const recentLogs = state.logs.filter(l => l.timestamp && l.timestamp > twelveHoursAgo);
+
+            // Çember Merkezi ve Yarıçapı (ViewBox 300x150, cx=150, cy=140, r=120)
+            const cx = 150, cy = 140, r = 120;
+
+            recentLogs.forEach(log => {
+                const diffMs = now - log.timestamp;
+                const percentage = Math.max(0, Math.min(1, diffMs / (12 * 60 * 60 * 1000)));
                 
-                if (result.status === "error") { 
-                    document.getElementById('statusDesc').innerText = "Analiz Hatası: " + result.message; 
-                    return; 
+                // Açı hesabı: 180 derece (sol) ile 0 derece (sağ) arası.
+                // Şimdiki zaman sağda (0 radyan), 12 saat önce solda (PI radyan).
+                const angle = percentage * Math.PI; 
+                const x = cx + r * Math.cos(angle);
+                const y = cy - r * Math.sin(angle);
+
+                // Orantısal pozisyon (CSS için)
+                const left = (x / 300) * 100;
+                const top = (y / 150) * 100;
+
+                const point = document.createElement('div');
+                point.className = 'log-point';
+                point.style.left = `${left}%`;
+                point.style.top = `${top}%`;
+                
+                let iconClass = '', bgClass = '';
+                if(log.type === 'sleep') { iconClass = 'fa-moon'; bgClass = 'bg-indigo-500'; }
+                else if(log.type === 'feed') { iconClass = 'fa-droplet'; bgClass = 'bg-emerald-500'; }
+                else if(log.type === 'diaper') { iconClass = 'fa-baby-carriage'; bgClass = 'bg-amber-500'; }
+
+                point.innerHTML = `
+                    <div class="icon-circle ${bgClass}"><i class="fa-solid ${iconClass}"></i></div>
+                    <span class="text-[8px] font-black text-slate-400 mt-1">${log.time}</span>
+                `;
+                container.appendChild(point);
+            });
+        }
+
+        // --- ARKA PLAN SAYAÇLARI (UYKU VE EMZİRME) ---
+        function updateMainTimer() {
+            const label = document.getElementById('mainTimerLabel');
+            const val = document.getElementById('mainTimerValue');
+            const sleepLogs = state.logs.filter(l => l.type === 'sleep');
+            
+            state.isSleeping = false;
+            let lastEventTime = null;
+
+            if (sleepLogs.length > 0) {
+                const last = sleepLogs[sleepLogs.length - 1];
+                if(last.title.includes('Uyudu')) {
+                    state.isSleeping = true;
+                    lastEventTime = last.timestamp;
+                } else {
+                    lastEventTime = last.timestamp; // Uyanıklık başlangıcı
                 }
-                
-                document.getElementById('statusDesc').innerText = "✅ Senkronizasyon Tamamlandı. " + (result.tip || "Gelişim verileri stabil.");
-                document.getElementById('nextActionTime').innerText = `Sonraki Uyku: ${result.next_sleep || '--:--'}`;
-                
-                // Gelen saat bilgisini dinamik halka için hafızaya kaydet ve başlat
-                state.nextSleepTime = result.next_sleep;
-                if(!state.isSleeping) {
-                    startCountdownRing(state.nextSleepTime);
-                }
-                
-            } catch (e) { 
-                document.getElementById('statusDesc').innerText = "Tahmin motoru sunucu yanıtı bekliyor."; 
+            }
+
+            const btnIcon = document.getElementById('sleepBtnIcon');
+            if (state.isSleeping) {
+                label.innerText = "Uykuda";
+                btnIcon.className = "fa-solid fa-sun"; // Uyanma butonu
+                document.getElementById('sleepBtnIcon').parentElement.className = "w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-sm border border-amber-100 active:scale-90 pulse-active";
+            } else {
+                label.innerText = "Uyanık";
+                btnIcon.className = "fa-solid fa-moon"; // Uyutma butonu
+                document.getElementById('sleepBtnIcon').parentElement.className = "w-16 h-16 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl shadow-sm border border-indigo-100 active:scale-90";
+            }
+
+            if (lastEventTime) {
+                const diffMins = Math.floor((new Date().getTime() - lastEventTime) / 60000);
+                const h = Math.floor(diffMins / 60);
+                const m = diffMins % 60;
+                val.innerText = h > 0 ? `${h}s ${m}d` : `${m} dk`;
             }
         }
 
+        function toggleSleep() {
+            if (state.isSleeping) saveLog('sleep', 'Bebek Uyandı');
+            else saveLog('sleep', 'Bebek Uyudu');
+        }
+
+        // Kilitlenmeyen Lokal Uyku Tahmini Algoritması
+        function calculateLocalSleep() {
+            const nextSleepEl = document.getElementById('nextSleepLocal');
+            if(state.isSleeping) { nextSleepEl.classList.add('hidden'); return; }
+            
+            const sleepLogs = state.logs.filter(l => l.type === 'sleep');
+            if(sleepLogs.length > 0 && sleepLogs[sleepLogs.length - 1].title.includes('Uyandı')) {
+                const wakeTime = sleepLogs[sleepLogs.length - 1].timestamp;
+                // 3 aylık bebek için rasyonel uyanıklık sınırı ortalama 105 dakikadır.
+                const targetTime = new Date(wakeTime + (105 * 60000));
+                nextSleepEl.innerText = `Tahmini Uyku Sınırı: ${targetTime.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}`;
+                nextSleepEl.classList.remove('hidden');
+            } else {
+                nextSleepEl.classList.add('hidden');
+            }
+        }
+
+        // Emzirme Arka Plan Sayacı
+        function updateNursingTimer() {
+            const startStr = localStorage.getItem('nursingStart');
+            if(!startStr) return;
+            const startTime = parseInt(startStr);
+            const diffSecs = Math.floor((Date.now() - startTime) / 1000);
+            const m = String(Math.floor(diffSecs / 60)).padStart(2, '0');
+            const s = String(diffSecs % 60).padStart(2, '0');
+            document.getElementById('nursingTimerDisplay').innerText = `${m}:${s}`;
+        }
+
+        function startNursingTimer() {
+            localStorage.setItem('nursingStart', Date.now().toString());
+            document.getElementById('nursingStartBtn').classList.add('hidden');
+            document.getElementById('nursingStopBtn').classList.remove('hidden');
+            if(nursingInterval) clearInterval(nursingInterval);
+            nursingInterval = setInterval(updateNursingTimer, 1000);
+        }
+
+        function stopNursingTimer() {
+            const startStr = localStorage.getItem('nursingStart');
+            if(!startStr) return;
+            const diffMins = Math.ceil((Date.now() - parseInt(startStr)) / 60000);
+            localStorage.removeItem('nursingStart');
+            clearInterval(nursingInterval);
+            document.getElementById('nursingTimerDisplay').innerText = "00:00";
+            document.getElementById('nursingStartBtn').classList.remove('hidden');
+            document.getElementById('nursingStopBtn').classList.add('hidden');
+            closeModal('feedingModal');
+            saveLog('feed', `Anne Sütü (${diffMins} dk)`);
+        }
+
+        function saveFormula() {
+            const val = document.getElementById('formulaAmount').value;
+            if(!val) return;
+            saveLog('feed', `Formül Mama (${val} cc)`);
+            document.getElementById('formulaAmount').value = '';
+            closeModal('feedingModal');
+        }
+
+        function saveDiaper(desc, colorClass, isWarning = false) {
+            if(isWarning) alert("KLİNİK UYARI: Bu dışkı rengi pediatrik bir anomaliye işaret edebilir. Lütfen hekiminize danışınız.");
+            saveLog('diaper', `Bez Değişimi: ${desc}`);
+            closeModal('diaperModal');
+        }
+
+        // --- ATAK HAFTALARI (WONDER WEEKS) ALGORİTMASI ---
+        const WONDER_WEEKS = [5, 8, 12, 19, 26, 37, 46, 55, 64, 75];
+        function calculateBiology() {
+            const birth = new Date(BABY_BIRTH_DATE);
+            const diffDays = Math.floor((Date.now() - birth) / (1000 * 60 * 60 * 24));
+            const diffWeeks = Math.floor(diffDays / 7);
+            document.getElementById('babyAgeText').innerText = `${diffDays} Günlük (${diffWeeks}. Hafta)`;
+
+            const alertBox = document.getElementById('wonderWeekAlert');
+            if (WONDER_WEEKS.includes(diffWeeks)) {
+                alertBox.classList.remove('hidden');
+                document.getElementById('wwDesc').innerText = "Biyolojik sıçrama (regresyon) dönemi. Uyku direnci ve huzursuzluk fizyolojik olarak normaldir.";
+            } else {
+                alertBox.classList.add('hidden');
+            }
+        }
+
+        // --- AŞI TAKVİMİ SİSTEMİ ---
+        const VACCINES = [
+            { id: "v1", month: 0, name: "Hepatit B (1. Doz)" },
+            { id: "v2", month: 1, name: "Hepatit B (2. Doz)" },
+            { id: "v3", month: 2, name: "BCG (Verem)" },
+            { id: "v4", month: 2, name: "Karma Aşı & Zatürre" },
+            { id: "v5", month: 4, name: "Karma Aşı & Zatürre (2. Doz)" },
+            { id: "v6", month: 6, name: "Hepatit B, Karma, Çocuk Felci" }
+        ];
+
+        function renderVaccines() {
+            const list = document.getElementById('vaccineList'); list.innerHTML = '';
+            const savedStatuses = JSON.parse(localStorage.getItem('vaccine_status')) || {};
+
+            VACCINES.forEach(vac => {
+                const isDone = savedStatuses[vac.id];
+                const bg = isDone ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200";
+                
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-2xl border ${bg} flex justify-between items-center transition-colors`;
+                div.innerHTML = `
+                    <div><span class="text-[10px] font-black text-slate-400 uppercase">${vac.month}. Ay</span><h4 class="font-bold text-sm text-slate-800">${vac.name}</h4></div>
+                    <button onclick="toggleVaccine('${vac.id}')" class="w-8 h-8 rounded-full border-2 flex items-center justify-center ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 text-transparent'}"><i class="fa-solid fa-check text-xs"></i></button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function toggleVaccine(id) {
+            const statuses = JSON.parse(localStorage.getItem('vaccine_status')) || {};
+            statuses[id] = !statuses[id];
+            localStorage.setItem('vaccine_status', JSON.stringify(statuses));
+            renderVaccines();
+        }
+
+        // --- UI YARDIMCILARI ---
+        function renderLogs() {
+            const list = document.getElementById('logList'); list.innerHTML = '';
+            state.logs.slice().reverse().slice(0,15).forEach(log => {
+                let icon = 'fa-check'; let color = 'text-slate-500';
+                if(log.type==='sleep') { icon='fa-moon'; color='text-indigo-500 bg-indigo-50'; }
+                if(log.type==='feed') { icon='fa-droplet'; color='text-emerald-500 bg-emerald-50'; }
+                if(log.type==='diaper') { icon='fa-baby-carriage'; color='text-amber-500 bg-amber-50'; }
+
+                list.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center ${color}"><i class="fa-solid ${icon}"></i></div>
+                            <div><p class="text-xs font-black text-slate-800">${log.title}</p><p class="text-[10px] font-bold text-slate-400">${log.time}</p></div>
+                        </div>
+                        <button onclick="deleteLog('${log.id}')" class="w-8 h-8 rounded-full text-slate-300 hover:text-rose-500 hover:bg-rose-50 flex items-center justify-center transition-colors"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>`;
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-600', 'text-slate-400'));
+            
+            document.getElementById(tabId + 'Tab').classList.add('active');
+            document.querySelector(`.nav-btn[data-target="${tabId}"]`).classList.replace('text-slate-400', 'text-indigo-600');
+            
+            if(tabId === 'info') renderVaccines();
+            if(tabId === 'ai' && state.chatHistory.length === 0) resetChatUI();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- AI ASİSTAN (Sadece İhtiyaç Anında Tetiklenir) ---
         function resetChatUI() {
-            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3 items-start"><div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300">Merhaba, ben BabyAI asistanı. Klinik ve rasyonel standartlarla ebeveynlik adımlarınızı analiz etmek için hazırım. Ek gıda, pediatri ve uyku düzeni süreçlerini sorabilirsiniz.</div></div>`;
+            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3"><div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0"><i class="fa-solid fa-robot text-xs"></i></div><div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 text-xs font-medium text-slate-700">Klinik analiz terminali aktif. Sorularınızı yöneltebilirsiniz.</div></div>`;
         }
 
-        function appendChatMessage(sender, text) {
-            const chatBox = document.getElementById('chatBox');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = "flex gap-3 items-start" + (sender === 'user' ? " flex-row-reverse" : "");
-            const avatar = sender === 'user' ? `<div class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-sm"></i></div>` : `<div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div>`;
-            const bubbleClass = sender === 'user' ? "bg-purple-600 text-white p-4 rounded-2xl shadow-sm text-xs font-medium max-w-[80%] leading-relaxed" : "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300";
-            messageDiv.innerHTML = `${avatar}<div class="${bubbleClass}">${text}</div>`;
-            chatBox.appendChild(messageDiv); chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function quickAsk(text) { document.getElementById('chatInput').value = text; sendChatMessage(); }
-
-        async function sendChatMessage() {
-            const input = document.getElementById('chatInput'), message = input.value.trim();
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput'); const message = input.value.trim();
             if (!message) return;
-            appendChatMessage('user', message); input.value = '';
+            
+            document.getElementById('chatBox').innerHTML += `<div class="flex gap-3 flex-row-reverse"><div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-xs"></i></div><div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none text-xs font-medium">${message}</div></div>`;
+            input.value = '';
+            
             state.chatHistory.push({ role: "user", parts: [{ text: message }] });
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
 
-            const chatBox = document.getElementById('chatBox'), typingDiv = document.createElement('div');
-            typingDiv.id = "aiTyping"; typingDiv.className = "flex gap-3 items-start";
-            typingDiv.innerHTML = `<div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs text-slate-400 dark:text-slate-500 max-w-[80%] italic leading-relaxed transition-colors duration-300">Klinik veriler inceleniyor...</div>`;
-            chatBox.appendChild(typingDiv); chatBox.scrollTop = chatBox.scrollHeight;
-
-            const params = newSearchParams();
-            params.append("action", "chat");
-            params.append("birthDate", BABY_BIRTH_DATE);
+            const params = new URLSearchParams();
+            params.append("action", "chat"); params.append("birthDate", BABY_BIRTH_DATE);
             params.append("history", JSON.stringify(state.chatHistory));
 
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
-                const data = await response.json();
-                document.getElementById('aiTyping').remove();
-                
-                if (data.status === "error") { appendChatMessage('model', "Sistem Hatası: " + data.message); return; }
-                appendChatMessage('model', data.response);
-                state.chatHistory.push({ role: "model", parts: [{ text: data.response }] });
-            } catch (e) {
-                console.error("Chatbot hata detayı:", e);
-                if(document.getElementById('aiTyping')) document.getElementById('aiTyping').remove();
-                appendChatMessage('model', "İletişim kopukluğu. Lütfen internet bağlantınızı kontrol ediniz.");
-            }
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('chatBox').innerHTML += `<div class="flex gap-3"><div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0"><i class="fa-solid fa-robot text-xs"></i></div><div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 text-xs font-medium text-slate-700 leading-relaxed">${data.response || data.message}</div></div>`;
+                    state.chatHistory.push({ role: "model", parts: [{ text: data.response }] });
+                    document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+                });
         }
 
-        document.getElementById('chatInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') sendChatMessage(); });
-
-        calculateAgeAndTricks(); 
-        updateUI(); 
+        // SİSTEM BAŞLATMA
+        calculateBiology();
+        renderLogs();
+        renderArcTimeline();
+        calculateLocalSleep();
         
-        async function bootSystem() {
-            await fetchLogs();
-            await analyzeWithAI();
+        // Emzirme sayacı arka planda bırakıldıysa devam ettir
+        if(localStorage.getItem('nursingStart')) {
+            document.getElementById('nursingStartBtn').classList.add('hidden');
+            document.getElementById('nursingStopBtn').classList.remove('hidden');
+            nursingInterval = setInterval(updateNursingTimer, 1000);
         }
-        bootSystem();
+
+        // Ana sayaç döngüsü
+        uiInterval = setInterval(() => {
+            updateMainTimer();
+        }, 1000);
+
     </script>
 </body>
 </html>
