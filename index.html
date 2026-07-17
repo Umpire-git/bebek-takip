@@ -3,170 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BabyAI - Klinik Takip Terminali</title>
+    <title>BabyAI Pro - Klinik Takip</title>
     
+    <!-- iOS PWA Meta Etiketleri -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BabyAI">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; overflow-x: hidden; -ms-overflow-style: none; scrollbar-width: none; }
+        :root {
+            --baby-blue: #e0f2fe;
+            --baby-indigo: #6366f1;
+            --soft-gray: #f8fafc;
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #000; /* iOS çentik uyumu için */
+            overscroll-behavior-y: contain;
+        }
+        .app-container {
+            background-color: var(--soft-gray);
+            min-height: 100vh;
+            max-width: 450px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .arc-container { position: relative; width: 100%; height: 180px; overflow: hidden; }
+        .tab-content { display: none; transition: all 0.3s ease; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { display: none; }
-        .tab-content { display: none; }
-        .tab-content.active { display: flex; flex-direction: column; }
-        .arc-container { position: relative; width: 100%; height: 200px; overflow: hidden; margin-top: 1rem; }
-        .arc-path { fill: none; stroke: #e2e8f0; stroke-width: 12; stroke-linecap: round; }
-        .log-point { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; items-center; justify-content: center; }
-        .icon-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .pulse-active { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse-ring { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+        
+        .action-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-btn:active { transform: scale(0.92); }
     </style>
 </head>
-<body class="flex justify-center min-h-screen text-slate-800">
+<body>
 
-    <div class="w-full max-w-md bg-white flex flex-col min-h-screen relative pb-24 shadow-2xl border-x border-slate-100">
+    <div class="app-container flex flex-col">
         
-        <!-- ÜST BİLGİ VE ATAK HAFTASI ÇUBUĞU -->
-        <div class="px-6 pt-12 pb-4 bg-white border-b border-slate-100 flex justify-between items-center sticky top-0 z-50">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-200">
-                    <i class="fa-solid fa-baby text-2xl text-slate-400"></i>
+        <!-- ÜST PANEL (Sticky Header) -->
+        <header class="sticky top-0 z-50 glass-card px-6 pt-12 pb-4 border-b border-slate-200/50">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-indigo-500 to-blue-400 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                        <i class="fa-solid fa-baby text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-slate-900 tracking-tight">Ali Kuzey</h1>
+                        <p id="babyAgeText" class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Yükleniyor...</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-black text-xl tracking-tight">Bebek Takibi</h1>
-                    <p id="babyAgeText" class="text-xs font-bold text-slate-400">--</p>
+                <div class="flex gap-2">
+                    <button onclick="switchTab('ai')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 action-btn"><i class="fa-solid fa-sparkles text-sm"></i></button>
                 </div>
             </div>
-            <button onclick="switchTab('info')" class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-500 active:scale-95"><i class="fa-solid fa-clipboard-user"></i></button>
+        </header>
+
+        <!-- ATAK HAFTASI BANDI -->
+        <div id="wonderWeekAlert" class="hidden animate-pulse bg-gradient-to-r from-rose-500 to-orange-400 p-3 text-center">
+            <p class="text-white text-[10px] font-black uppercase tracking-widest"><i class="fa-solid fa-bolt mr-2"></i> Biyolojik Gelişim Sıçraması (Atak Haftası)</p>
         </div>
 
-        <!-- ATAK HAFTASI UYARISI -->
-        <div id="wonderWeekAlert" class="hidden bg-rose-50 border-y border-rose-100 p-3 px-6 flex items-start gap-3">
-            <i class="fa-solid fa-bolt text-rose-500 mt-0.5"></i>
-            <div>
-                <h4 id="wwTitle" class="text-xs font-black text-rose-700 uppercase tracking-tight">Atak Haftası Aktif</h4>
-                <p id="wwDesc" class="text-[10px] text-rose-600 font-medium leading-tight mt-1"></p>
-            </div>
-        </div>
+        <main class="flex-1 pb-32">
+            <!-- PANEL SEKMESİ -->
+            <div id="dailyTab" class="tab-content active px-6 pt-6">
+                <!-- ARC GÖRSELLEŞTİRME -->
+                <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100 mb-6">
+                    <div class="arc-container" id="arcContainer">
+                        <svg viewBox="0 0 300 150" class="w-full h-full">
+                            <path d="M 40,140 A 110,110 0 0,1 260,140" fill="none" stroke="#f1f5f9" stroke-width="12" stroke-linecap="round" />
+                            <path id="arcProgress" d="M 40,140 A 110,110 0 0,1 260,140" fill="none" stroke="url(#grad1)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 1000" />
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div id="arcPoints" class="absolute inset-0"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pt-8">
+                            <p id="mainTimerLabel" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Durum</p>
+                            <h2 id="mainTimerValue" class="text-4xl font-black text-slate-800 tracking-tighter">--:--</h2>
+                        </div>
+                    </div>
 
-        <!-- ================= SEKME 1: ANA TAKİP (ARC) ================= -->
-        <div id="dailyTab" class="tab-content active flex-1">
-            
-            <!-- ARC (Yarım Çember) ZAMAN ÇİZELGESİ -->
-            <div class="bg-white pt-4 pb-8 flex flex-col items-center border-b border-slate-100">
-                <div class="arc-container" id="arcContainer">
-                    <svg viewBox="0 0 300 150" class="w-full h-full">
-                        <path d="M 30,140 A 120,120 0 0,1 270,140" class="arc-path" />
-                    </svg>
-                    <div id="arcPoints"></div>
-                </div>
-                
-                <div class="text-center -mt-10 z-10 bg-white px-8 rounded-full py-2">
-                    <p id="mainTimerLabel" class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Durum</p>
-                    <h2 id="mainTimerValue" class="text-4xl font-black tracking-tighter text-slate-800">--:--</h2>
-                    <p id="nextSleepLocal" class="text-[10px] font-bold text-indigo-500 mt-2 bg-indigo-50 px-3 py-1 rounded-full hidden">Tahmini Uyku: --:--</p>
+                    <!-- HIZLI AKSİYONLAR -->
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <button onclick="toggleSleep()" class="flex flex-col items-center gap-2">
+                            <div id="sleepBtnIconContainer" class="w-16 h-16 rounded-3xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl action-btn border border-indigo-100">
+                                <i id="sleepBtnIcon" class="fa-solid fa-moon"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Uyku</span>
+                        </button>
+                        <button onclick="openModal('feedingModal')" class="flex flex-col items-center gap-2">
+                            <div class="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl action-btn border border-emerald-100">
+                                <i class="fa-solid fa-bottle-droplet"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Beslenme</span>
+                        </button>
+                        <button onclick="openModal('diaperModal')" class="flex flex-col items-center gap-2">
+                            <div class="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl action-btn border border-amber-100">
+                                <i class="fa-solid fa-poop"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Bez</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- HIZLI AKSİYON BUTONLARI -->
-                <div class="flex gap-4 mt-8">
-                    <button onclick="toggleSleep()" class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl shadow-sm border border-indigo-100 active:scale-90 transition-transform"><i id="sleepBtnIcon" class="fa-solid fa-moon"></i></button>
-                    <button onclick="openModal('feedingModal')" class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl shadow-sm border border-emerald-100 active:scale-90 transition-transform"><i class="fa-solid fa-droplet"></i></button>
-                    <button onclick="openModal('diaperModal')" class="w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-sm border border-amber-100 active:scale-90 transition-transform"><i class="fa-solid fa-baby-carriage"></i></button>
-                </div>
-            </div>
-
-            <!-- SON KAYITLAR VE DÜZENLEME -->
-            <div class="p-6 flex-1 bg-slate-50">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Son 24 Saat</h3>
-                </div>
+                <!-- SON KAYITLAR -->
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 px-2">Aktivite Geçmişi</h3>
                 <div id="logList" class="space-y-3"></div>
             </div>
-        </div>
 
-        <!-- ================= SEKME 2: BEBEK BİLGİLERİ VE AŞILAR ================= -->
-        <div id="infoTab" class="tab-content min-h-screen bg-slate-50">
-            <div class="p-6 space-y-6">
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Biyometrik Veriler</h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">İsim</span><span class="text-sm font-black">Ali Kuzey</span></div>
-                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">Doğum Tarihi</span><span class="text-sm font-black">17 Nisan 2026</span></div>
-                        <div class="flex justify-between items-center pb-3 border-b border-slate-50"><span class="text-sm font-bold text-slate-600">Kan Grubu</span><span class="text-sm font-black">Bilinmiyor</span></div>
-                    </div>
+            <!-- ANALİZ SEKMESİ (AI) -->
+            <div id="aiTab" class="tab-content px-6 pt-6">
+                <div class="bg-indigo-600 rounded-3xl p-6 text-white mb-6 shadow-xl shadow-indigo-100">
+                    <h3 class="text-lg font-bold mb-2">BabyAI Klinik Analiz</h3>
+                    <p class="text-indigo-100 text-xs leading-relaxed opacity-90">Verileriniz ve pediyatrik algoritmalar birleştirilerek analiz yapılır. Tıbbi teşhis değildir.</p>
                 </div>
-
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Kapsamlı Aşı Takvimi</h3>
-                    </div>
+                <div id="chatBox" class="space-y-4 mb-20"></div>
+            </div>
+            
+            <!-- SAĞLIK SEKMESİ -->
+            <div id="infoTab" class="tab-content px-6 pt-6">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-black text-slate-800 mb-4">Aşı Takvimi</h3>
                     <div id="vaccineList" class="space-y-4"></div>
                 </div>
             </div>
-        </div>
-
-        <!-- ================= SEKME 3: AI KLİNİK ANALİZ ================= -->
-        <div id="aiTab" class="tab-content min-h-screen flex flex-col bg-slate-50">
-            <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-            <div class="p-4 bg-white border-t border-slate-100 flex gap-2 items-center">
-                <input id="chatInput" type="text" placeholder="Klinik soru yöneltin..." class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-indigo-300">
-                <button onclick="sendChatMessage()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center active:scale-95"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
+        </main>
 
         <!-- ALT NAVİGASYON -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 h-20 flex justify-around items-center z-40 max-w-md mx-auto px-2">
-            <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="daily"><i class="fa-solid fa-chart-pie text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Panel</span></button>
-            <button onclick="switchTab('info')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="info"><i class="fa-solid fa-syringe text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Sağlık</span></button>
-            <button onclick="switchTab('ai')" class="flex flex-col items-center justify-center w-16 h-12 text-slate-400 nav-btn" data-target="ai"><i class="fa-solid fa-brain text-xl mb-1"></i><span class="text-[8px] font-black uppercase">Analiz</span></button>
+        <nav class="fixed bottom-6 left-6 right-6 h-20 glass-card rounded-[2rem] border border-white shadow-2xl flex justify-around items-center z-50 px-4">
+            <button onclick="switchTab('daily')" class="nav-btn text-indigo-600" data-target="daily">
+                <i class="fa-solid fa-house-chimney text-xl"></i>
+            </button>
+            <button onclick="switchTab('info')" class="nav-btn text-slate-400" data-target="info">
+                <i class="fa-solid fa-heart-pulse text-xl"></i>
+            </button>
+            <button onclick="switchTab('ai')" class="nav-btn text-slate-400" data-target="ai">
+                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+            </button>
         </nav>
 
-        <!-- ================= MODALLER ================= -->
-        
-        <!-- Beslenme Arka Plan Sayacı Modalı -->
-        <div id="feedingModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white w-full rounded-t-[2rem] p-6 space-y-5 transform transition-transform">
-                <div class="flex justify-between items-center"><h3 class="text-lg font-black">Beslenme Takibi</h3><button onclick="closeModal('feedingModal')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button></div>
-                
-                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 text-center">
-                    <h4 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2">Emzirme Sayacı</h4>
-                    <div id="nursingTimerDisplay" class="text-4xl font-black text-emerald-700 mb-4 font-mono">00:00</div>
-                    <div class="flex gap-2">
-                        <button id="nursingStartBtn" onclick="startNursingTimer()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl active:scale-95">Başlat</button>
-                        <button id="nursingStopBtn" onclick="stopNursingTimer()" class="flex-1 bg-rose-500 text-white font-bold py-3 rounded-xl hidden active:scale-95">Bitir & Kaydet</button>
+        <!-- MODALLER (Aynı Mantık, Modern Tasarım) -->
+        <div id="feedingModal" class="hidden fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-md flex items-end">
+            <div class="w-full bg-white rounded-t-[3rem] p-8 animate-slide-up">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+                <h3 class="text-2xl font-black text-slate-800 mb-6">Beslenme Kaydı</h3>
+                <div class="space-y-4">
+                    <button onclick="startNursingTimer()" class="w-full py-5 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100">Emzirmeyi Başlat</button>
+                    <div class="flex gap-3">
+                        <input id="formulaAmount" type="number" placeholder="Mama (cc)" class="flex-1 p-5 bg-slate-50 border-0 rounded-2xl font-bold outline-none ring-2 ring-transparent focus:ring-indigo-500 transition-all">
+                        <button onclick="saveFormula()" class="px-8 bg-slate-900 text-white font-bold rounded-2xl">Kaydet</button>
                     </div>
-                </div>
-
-                <div class="relative flex items-center py-2"><div class="flex-grow border-t border-slate-200"></div><span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold">VEYA MAMA GİRİŞİ</span><div class="flex-grow border-t border-slate-200"></div></div>
-
-                <div class="flex gap-3">
-                    <input id="formulaAmount" type="number" placeholder="Miktar (cc)" class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold">
-                    <button onclick="saveFormula()" class="w-24 bg-slate-800 text-white font-bold rounded-2xl active:scale-95">Kaydet</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Klinik Kaka Renk Modalı -->
-        <div id="diaperModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end justify-center z-50">
-            <div class="bg-white w-full rounded-t-[2rem] p-6 space-y-5">
-                <div class="flex justify-between items-center"><h3 class="text-lg font-black">Klinik Dışkı Analizi</h3><button onclick="closeModal('diaperModal')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button></div>
-                
-                <button onclick="saveDiaper('Sadece Çiş', 'blue')" class="w-full bg-blue-50 text-blue-700 border border-blue-200 font-black p-4 rounded-2xl mb-4">Sadece Çiş / Islak</button>
-                
-                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kaka Renk Skalası</h4>
-                <div class="grid grid-cols-2 gap-3">
-                    <!-- Normal Renkler -->
-                    <button onclick="saveDiaper('Hardal Sarısı', 'amber')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-amber-400 shadow-inner"></div><span class="text-xs font-bold">Hardal / Sarı<br><span class="text-[9px] text-slate-400">Normal (Anne Sütü)</span></span></button>
-                    <button onclick="saveDiaper('Açık Yeşil', 'lime')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-lime-400 shadow-inner"></div><span class="text-xs font-bold">Açık Yeşil<br><span class="text-[9px] text-slate-400">Ön süt ağırlıklı</span></span></button>
-                    <button onclick="saveDiaper('Koyu Yeşil', 'green')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-emerald-700 shadow-inner"></div><span class="text-xs font-bold">Koyu Yeşil<br><span class="text-[9px] text-slate-400">Demir takviyesi</span></span></button>
-                    <button onclick="saveDiaper('Turuncu / Kahve', 'orange')" class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl text-left active:bg-slate-50"><div class="w-6 h-6 rounded-full bg-orange-600 shadow-inner"></div><span class="text-xs font-bold">Kahverengi<br><span class="text-[9px] text-slate-400">Normal (Mama/Ek gıda)</span></span></button>
-                    
-                    <!-- Klinik Uyarı Renkleri -->
-                    <button onclick="saveDiaper('Kırmızı (Kanlı)', 'rose', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-rose-600 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Kırmızı<br><span class="text-[9px]">Alerji / Çatlak</span></span></button>
-                    <button onclick="saveDiaper('Siyah (Melena)', 'slate', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-slate-900 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Siyah<br><span class="text-[9px]">Üst GİS kanama</span></span></button>
-                    <button onclick="saveDiaper('Gri / Beyaz', 'gray', true)" class="flex items-center gap-3 p-3 border border-rose-200 bg-rose-50 rounded-xl text-left"><div class="w-6 h-6 rounded-full bg-gray-300 shadow-inner"></div><span class="text-xs font-bold text-rose-700">Beyaz / Gri<br><span class="text-[9px]">Safra tıkanıklığı</span></span></button>
+                    <button onclick="closeModal('feedingModal')" class="w-full py-4 text-slate-400 font-bold">Vazgeç</button>
                 </div>
             </div>
         </div>
@@ -174,326 +181,120 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3ZJ1YHcK53uoc9YeRg69fD5Z4zIzScDhwtoVAS7OHzUBt0_YJVeP5JLQ_nu_eodai/exec"; 
-        const BABY_BIRTH_DATE = "2026-04-17"; 
+        // --- CONFIG ---
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxus3MEkOxGKzKUYl-DQRLXtHzLi38BtO_8Fso-tKPUqcQ-yfv7H6QCSMSQ6p9xTvP8/exec"; 
+        const BIRTH_DATE = "2026-04-17";
 
-        let state = { logs: JSON.parse(localStorage.getItem('baby_logs')) || [], chatHistory: [], isSleeping: false, sleepStartTime: null };
-        let uiInterval;
-        let nursingInterval;
+        let state = {
+            logs: JSON.parse(localStorage.getItem('baby_logs')) || [],
+            isSleeping: false,
+            currentTab: 'daily'
+        };
 
-        // --- VERİ MİMARİSİ VE SENKRONİZASYON ---
-        async function saveLog(type, title) {
-            const now = new Date();
-            const logId = now.getTime().toString();
-            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
-            
-            const newLog = { id: logId, type, title, time: timeStr, date: dateStr, timestamp: now.getTime() };
-            state.logs.push(newLog);
-            localStorage.setItem('baby_logs', JSON.stringify(state.logs));
-            
-            renderLogs(); renderArcTimeline(); calculateLocalSleep();
-
-            const params = new URLSearchParams();
-            params.append("action", "save_log");
-            params.append("id", logId); params.append("type", type);
-            params.append("title", title); params.append("time", timeStr); params.append("date", dateStr);
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params }).catch(e => console.error("Bulut senkronizasyonu başarısız:", e));
+        // --- CORE FUNCTIONS ---
+        function init() {
+            renderLogs();
+            updateStats();
+            setInterval(updateStats, 10000); // 10 saniyede bir güncelle
+            calculateWonderWeeks();
         }
 
-        function deleteLog(id) {
-            if(!confirm("Klinik kaydı silmek istediğinize emin misiniz?")) return;
-            state.logs = state.logs.filter(l => l.id !== id);
-            localStorage.setItem('baby_logs', JSON.stringify(state.logs));
-            renderLogs(); renderArcTimeline(); calculateLocalSleep();
-
-            const params = new URLSearchParams();
-            params.append("action", "delete_log"); params.append("id", id);
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
-        }
-
-        // --- ARC (YARIM ÇEMBER) ZAMAN ÇİZELGESİ MATEMATİĞİ ---
-        function renderArcTimeline() {
-            const container = document.getElementById('arcPoints');
-            container.innerHTML = '';
+        function updateStats() {
+            // Yaş hesaplama
+            const diff = new Date() - new Date(BIRTH_DATE);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('babyAgeText').innerText = `${days} Günlük • ${Math.floor(days/7)}. Hafta`;
             
-            const now = new Date().getTime();
-            const twelveHoursAgo = now - (12 * 60 * 60 * 1000);
-            const recentLogs = state.logs.filter(l => l.timestamp && l.timestamp > twelveHoursAgo);
-
-            // Çember Merkezi ve Yarıçapı (ViewBox 300x150, cx=150, cy=140, r=120)
-            const cx = 150, cy = 140, r = 120;
-
-            recentLogs.forEach(log => {
-                const diffMs = now - log.timestamp;
-                const percentage = Math.max(0, Math.min(1, diffMs / (12 * 60 * 60 * 1000)));
-                
-                // Açı hesabı: 180 derece (sol) ile 0 derece (sağ) arası.
-                // Şimdiki zaman sağda (0 radyan), 12 saat önce solda (PI radyan).
-                const angle = percentage * Math.PI; 
-                const x = cx + r * Math.cos(angle);
-                const y = cy - r * Math.sin(angle);
-
-                // Orantısal pozisyon (CSS için)
-                const left = (x / 300) * 100;
-                const top = (y / 150) * 100;
-
-                const point = document.createElement('div');
-                point.className = 'log-point';
-                point.style.left = `${left}%`;
-                point.style.top = `${top}%`;
-                
-                let iconClass = '', bgClass = '';
-                if(log.type === 'sleep') { iconClass = 'fa-moon'; bgClass = 'bg-indigo-500'; }
-                else if(log.type === 'feed') { iconClass = 'fa-droplet'; bgClass = 'bg-emerald-500'; }
-                else if(log.type === 'diaper') { iconClass = 'fa-baby-carriage'; bgClass = 'bg-amber-500'; }
-
-                point.innerHTML = `
-                    <div class="icon-circle ${bgClass}"><i class="fa-solid ${iconClass}"></i></div>
-                    <span class="text-[8px] font-black text-slate-400 mt-1">${log.time}</span>
-                `;
-                container.appendChild(point);
-            });
-        }
-
-        // --- ARKA PLAN SAYAÇLARI (UYKU VE EMZİRME) ---
-        function updateMainTimer() {
-            const label = document.getElementById('mainTimerLabel');
-            const val = document.getElementById('mainTimerValue');
-            const sleepLogs = state.logs.filter(l => l.type === 'sleep');
-            
-            state.isSleeping = false;
-            let lastEventTime = null;
-
-            if (sleepLogs.length > 0) {
-                const last = sleepLogs[sleepLogs.length - 1];
-                if(last.title.includes('Uyudu')) {
-                    state.isSleeping = true;
-                    lastEventTime = last.timestamp;
-                } else {
-                    lastEventTime = last.timestamp; // Uyanıklık başlangıcı
-                }
+            // Son uykuyu kontrol et
+            const lastSleep = state.logs.filter(l => l.type === 'sleep').pop();
+            if (lastSleep && lastSleep.title.includes('Uyudu')) {
+                state.isSleeping = true;
+                updateTimer(lastSleep.timestamp, "Uykuda");
+            } else if (lastSleep) {
+                state.isSleeping = false;
+                updateTimer(lastSleep.timestamp, "Uyanık");
             }
+        }
 
-            const btnIcon = document.getElementById('sleepBtnIcon');
+        function updateTimer(ts, label) {
+            const diff = Math.floor((Date.now() - ts) / 60000);
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            document.getElementById('mainTimerValue').innerText = h > 0 ? `${h}s ${m}d` : `${m}dk`;
+            document.getElementById('mainTimerLabel').innerText = label;
+            
+            // UI Güncelleme
+            const icon = document.getElementById('sleepBtnIcon');
+            const container = document.getElementById('sleepBtnIconContainer');
             if (state.isSleeping) {
-                label.innerText = "Uykuda";
-                btnIcon.className = "fa-solid fa-sun"; // Uyanma butonu
-                document.getElementById('sleepBtnIcon').parentElement.className = "w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-sm border border-amber-100 active:scale-90 pulse-active";
+                icon.className = "fa-solid fa-sun";
+                container.className = "w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl action-btn border border-amber-100 animate-pulse";
             } else {
-                label.innerText = "Uyanık";
-                btnIcon.className = "fa-solid fa-moon"; // Uyutma butonu
-                document.getElementById('sleepBtnIcon').parentElement.className = "w-16 h-16 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl shadow-sm border border-indigo-100 active:scale-90";
-            }
-
-            if (lastEventTime) {
-                const diffMins = Math.floor((new Date().getTime() - lastEventTime) / 60000);
-                const h = Math.floor(diffMins / 60);
-                const m = diffMins % 60;
-                val.innerText = h > 0 ? `${h}s ${m}d` : `${m} dk`;
+                icon.className = "fa-solid fa-moon";
+                container.className = "w-16 h-16 rounded-3xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl action-btn border border-indigo-100";
             }
         }
 
-        function toggleSleep() {
-            if (state.isSleeping) saveLog('sleep', 'Bebek Uyandı');
-            else saveLog('sleep', 'Bebek Uyudu');
-        }
-
-        // Kilitlenmeyen Lokal Uyku Tahmini Algoritması
-        function calculateLocalSleep() {
-            const nextSleepEl = document.getElementById('nextSleepLocal');
-            if(state.isSleeping) { nextSleepEl.classList.add('hidden'); return; }
+        async function saveLog(type, title) {
+            const log = {
+                id: Date.now().toString(),
+                timestamp: Date.now(),
+                type,
+                title,
+                time: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
+            };
             
-            const sleepLogs = state.logs.filter(l => l.type === 'sleep');
-            if(sleepLogs.length > 0 && sleepLogs[sleepLogs.length - 1].title.includes('Uyandı')) {
-                const wakeTime = sleepLogs[sleepLogs.length - 1].timestamp;
-                // 3 aylık bebek için rasyonel uyanıklık sınırı ortalama 105 dakikadır.
-                const targetTime = new Date(wakeTime + (105 * 60000));
-                nextSleepEl.innerText = `Tahmini Uyku Sınırı: ${targetTime.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}`;
-                nextSleepEl.classList.remove('hidden');
-            } else {
-                nextSleepEl.classList.add('hidden');
-            }
+            state.logs.push(log);
+            localStorage.setItem('baby_logs', JSON.stringify(state.logs));
+            renderLogs();
+            updateStats();
+            
+            // Arka plan senkronizasyonu
+            const formData = new FormData();
+            formData.append('action', 'save_log');
+            formData.append('id', log.id);
+            formData.append('type', type);
+            formData.append('title', title);
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: new URLSearchParams(formData) });
         }
 
-        // Emzirme Arka Plan Sayacı
-        function updateNursingTimer() {
-            const startStr = localStorage.getItem('nursingStart');
-            if(!startStr) return;
-            const startTime = parseInt(startStr);
-            const diffSecs = Math.floor((Date.now() - startTime) / 1000);
-            const m = String(Math.floor(diffSecs / 60)).padStart(2, '0');
-            const s = String(diffSecs % 60).padStart(2, '0');
-            document.getElementById('nursingTimerDisplay').innerText = `${m}:${s}`;
-        }
-
-        function startNursingTimer() {
-            localStorage.setItem('nursingStart', Date.now().toString());
-            document.getElementById('nursingStartBtn').classList.add('hidden');
-            document.getElementById('nursingStopBtn').classList.remove('hidden');
-            if(nursingInterval) clearInterval(nursingInterval);
-            nursingInterval = setInterval(updateNursingTimer, 1000);
-        }
-
-        function stopNursingTimer() {
-            const startStr = localStorage.getItem('nursingStart');
-            if(!startStr) return;
-            const diffMins = Math.ceil((Date.now() - parseInt(startStr)) / 60000);
-            localStorage.removeItem('nursingStart');
-            clearInterval(nursingInterval);
-            document.getElementById('nursingTimerDisplay').innerText = "00:00";
-            document.getElementById('nursingStartBtn').classList.remove('hidden');
-            document.getElementById('nursingStopBtn').classList.add('hidden');
-            closeModal('feedingModal');
-            saveLog('feed', `Anne Sütü (${diffMins} dk)`);
-        }
-
-        function saveFormula() {
-            const val = document.getElementById('formulaAmount').value;
-            if(!val) return;
-            saveLog('feed', `Formül Mama (${val} cc)`);
-            document.getElementById('formulaAmount').value = '';
-            closeModal('feedingModal');
-        }
-
-        function saveDiaper(desc, colorClass, isWarning = false) {
-            if(isWarning) alert("KLİNİK UYARI: Bu dışkı rengi pediatrik bir anomaliye işaret edebilir. Lütfen hekiminize danışınız.");
-            saveLog('diaper', `Bez Değişimi: ${desc}`);
-            closeModal('diaperModal');
-        }
-
-        // --- ATAK HAFTALARI (WONDER WEEKS) ALGORİTMASI ---
-        const WONDER_WEEKS = [5, 8, 12, 19, 26, 37, 46, 55, 64, 75];
-        function calculateBiology() {
-            const birth = new Date(BABY_BIRTH_DATE);
-            const diffDays = Math.floor((Date.now() - birth) / (1000 * 60 * 60 * 24));
-            const diffWeeks = Math.floor(diffDays / 7);
-            document.getElementById('babyAgeText').innerText = `${diffDays} Günlük (${diffWeeks}. Hafta)`;
-
-            const alertBox = document.getElementById('wonderWeekAlert');
-            if (WONDER_WEEKS.includes(diffWeeks)) {
-                alertBox.classList.remove('hidden');
-                document.getElementById('wwDesc').innerText = "Biyolojik sıçrama (regresyon) dönemi. Uyku direnci ve huzursuzluk fizyolojik olarak normaldir.";
-            } else {
-                alertBox.classList.add('hidden');
-            }
-        }
-
-        // --- AŞI TAKVİMİ SİSTEMİ ---
-        const VACCINES = [
-            { id: "v1", month: 0, name: "Hepatit B (1. Doz)" },
-            { id: "v2", month: 1, name: "Hepatit B (2. Doz)" },
-            { id: "v3", month: 2, name: "BCG (Verem)" },
-            { id: "v4", month: 2, name: "Karma Aşı & Zatürre" },
-            { id: "v5", month: 4, name: "Karma Aşı & Zatürre (2. Doz)" },
-            { id: "v6", month: 6, name: "Hepatit B, Karma, Çocuk Felci" }
-        ];
-
-        function renderVaccines() {
-            const list = document.getElementById('vaccineList'); list.innerHTML = '';
-            const savedStatuses = JSON.parse(localStorage.getItem('vaccine_status')) || {};
-
-            VACCINES.forEach(vac => {
-                const isDone = savedStatuses[vac.id];
-                const bg = isDone ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200";
-                
-                const div = document.createElement('div');
-                div.className = `p-4 rounded-2xl border ${bg} flex justify-between items-center transition-colors`;
-                div.innerHTML = `
-                    <div><span class="text-[10px] font-black text-slate-400 uppercase">${vac.month}. Ay</span><h4 class="font-bold text-sm text-slate-800">${vac.name}</h4></div>
-                    <button onclick="toggleVaccine('${vac.id}')" class="w-8 h-8 rounded-full border-2 flex items-center justify-center ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 text-transparent'}"><i class="fa-solid fa-check text-xs"></i></button>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function toggleVaccine(id) {
-            const statuses = JSON.parse(localStorage.getItem('vaccine_status')) || {};
-            statuses[id] = !statuses[id];
-            localStorage.setItem('vaccine_status', JSON.stringify(statuses));
-            renderVaccines();
-        }
-
-        // --- UI YARDIMCILARI ---
         function renderLogs() {
-            const list = document.getElementById('logList'); list.innerHTML = '';
-            state.logs.slice().reverse().slice(0,15).forEach(log => {
-                let icon = 'fa-check'; let color = 'text-slate-500';
-                if(log.type==='sleep') { icon='fa-moon'; color='text-indigo-500 bg-indigo-50'; }
-                if(log.type==='feed') { icon='fa-droplet'; color='text-emerald-500 bg-emerald-50'; }
-                if(log.type==='diaper') { icon='fa-baby-carriage'; color='text-amber-500 bg-amber-50'; }
-
-                list.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center ${color}"><i class="fa-solid ${icon}"></i></div>
-                            <div><p class="text-xs font-black text-slate-800">${log.title}</p><p class="text-[10px] font-bold text-slate-400">${log.time}</p></div>
+            const list = document.getElementById('logList');
+            list.innerHTML = state.logs.slice().reverse().slice(0, 10).map(log => `
+                <div class="bg-white p-5 rounded-[2rem] border border-slate-100 flex justify-between items-center shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center ${getLogColor(log.type)}">
+                            <i class="fa-solid ${getLogIcon(log.type)}"></i>
                         </div>
-                        <button onclick="deleteLog('${log.id}')" class="w-8 h-8 rounded-full text-slate-300 hover:text-rose-500 hover:bg-rose-50 flex items-center justify-center transition-colors"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                    </div>`;
-            });
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${log.title}</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${log.time}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteLog('${log.id}')" class="text-slate-200 hover:text-rose-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            `).join('');
         }
 
+        // Yardımcı Fonksiyonlar
+        function getLogIcon(t) { return t === 'sleep' ? 'fa-moon' : t === 'feed' ? 'fa-bottle-droplet' : 'fa-poop'; }
+        function getLogColor(t) { return t === 'sleep' ? 'bg-indigo-50 text-indigo-600' : t === 'feed' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'; }
+        
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-600', 'text-slate-400'));
-            
             document.getElementById(tabId + 'Tab').classList.add('active');
-            document.querySelector(`.nav-btn[data-target="${tabId}"]`).classList.replace('text-slate-400', 'text-indigo-600');
-            
-            if(tabId === 'info') renderVaccines();
-            if(tabId === 'ai' && state.chatHistory.length === 0) resetChatUI();
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-600', 'text-slate-400'));
+            document.querySelector(`[data-target="${tabId}"]`).classList.replace('text-slate-400', 'text-indigo-600');
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- AI ASİSTAN (Sadece İhtiyaç Anında Tetiklenir) ---
-        function resetChatUI() {
-            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3"><div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0"><i class="fa-solid fa-robot text-xs"></i></div><div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 text-xs font-medium text-slate-700">Klinik analiz terminali aktif. Sorularınızı yöneltebilirsiniz.</div></div>`;
+        function toggleSleep() {
+            state.isSleeping ? saveLog('sleep', 'Bebek Uyandı') : saveLog('sleep', 'Bebek Uyudu');
         }
 
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput'); const message = input.value.trim();
-            if (!message) return;
-            
-            document.getElementById('chatBox').innerHTML += `<div class="flex gap-3 flex-row-reverse"><div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center shrink-0"><i class="fa-solid fa-user text-xs"></i></div><div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none text-xs font-medium">${message}</div></div>`;
-            input.value = '';
-            
-            state.chatHistory.push({ role: "user", parts: [{ text: message }] });
-            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-
-            const params = new URLSearchParams();
-            params.append("action", "chat"); params.append("birthDate", BABY_BIRTH_DATE);
-            params.append("history", JSON.stringify(state.chatHistory));
-
-            fetch(APPS_SCRIPT_URL, { method: 'POST', body: params })
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('chatBox').innerHTML += `<div class="flex gap-3"><div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0"><i class="fa-solid fa-robot text-xs"></i></div><div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 text-xs font-medium text-slate-700 leading-relaxed">${data.response || data.message}</div></div>`;
-                    state.chatHistory.push({ role: "model", parts: [{ text: data.response }] });
-                    document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-                });
-        }
-
-        // SİSTEM BAŞLATMA
-        calculateBiology();
-        renderLogs();
-        renderArcTimeline();
-        calculateLocalSleep();
-        
-        // Emzirme sayacı arka planda bırakıldıysa devam ettir
-        if(localStorage.getItem('nursingStart')) {
-            document.getElementById('nursingStartBtn').classList.add('hidden');
-            document.getElementById('nursingStopBtn').classList.remove('hidden');
-            nursingInterval = setInterval(updateNursingTimer, 1000);
-        }
-
-        // Ana sayaç döngüsü
-        uiInterval = setInterval(() => {
-            updateMainTimer();
-        }, 1000);
-
+        init();
     </script>
 </body>
 </html>
