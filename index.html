@@ -12,7 +12,7 @@
     
     <!-- Üst Düzey UI Kütüphaneleri -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -44,14 +44,13 @@
 </head>
 <body class="flex justify-center min-h-screen text-slate-800">
 
-    <!-- Ana Cihaz Çerçevesi -->
     <div class="w-full max-w-md bg-[#F8F9FA] flex flex-col min-h-screen relative pb-20 shadow-premium">
         
         <!-- ================= SEKME 1: GÜNLÜK TAKİP ================= -->
         <div id="dailyTab" class="tab-content active min-h-screen">
             <!-- Premium Durum Paneli -->
             <header class="p-6 pt-8 pb-3">
-                <div id="statusCard" class="bg-gradient-to-br from="[#E3F2FD]" to="[#BBDEFB]" rounded-[2rem] p-6 shadow-card border border-white/40 smooth-transition">
+                <div id="statusCard" class="bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-3xl p-6 shadow-card border border-white/40 smooth-transition">
                     <div class="flex justify-between items-start">
                         <div>
                             <div class="flex items-center gap-2 bg-white/40 backdrop-blur-md px-3 py-1 rounded-full w-max">
@@ -65,16 +64,16 @@
                         </div>
                     </div>
                     <p id="statusDesc" class="text-sm text-blue-900/90 mt-4 font-medium leading-relaxed bg-white/30 p-3 rounded-xl backdrop-blur-sm">
-                        Veritabanı bağlantısı kuruluyor...
+                        Yerel hafıza yüklendi. Arka plan senkronizasyonu başlatılıyor...
                     </p>
                     <div class="mt-4 pt-3 border-t border-blue-900/10 flex justify-between text-xs text-blue-950/70 font-bold">
-                        <span id="nextActionTime" class="flex items-center gap-1.5"><i class="fa-solid fa-clock-history"></i> Sonraki Uyku: --:--</span>
+                        <span id="nextActionTime" class="flex items-center gap-1.5"><i class="fa-solid fa-clock-history"></i> Sonraki Uyku: Hesaplamıyor...</span>
                         <span id="lastEventTime">Son Giriş: --:--</span>
                     </div>
                 </div>
             </header>
 
-            <!-- Dinamik Gelişim ve Trik Önerileri Paneli (Sıfır Gecikme) -->
+            <!-- Gelişim ve Trik Önerileri Paneli -->
             <section class="px-6 mb-4">
                 <div class="bg-white border border-slate-100 rounded-3xl p-5 shadow-premium">
                     <div class="flex justify-between items-center mb-3">
@@ -120,11 +119,14 @@
                 </div>
             </section>
 
-            <!-- Kayıt Geçmişi -->
+            <!-- Cihazda Sadece Son 10 Kaydı Tutan Hafif Geçmiş Listesi -->
             <section class="flex-1 px-6 mb-6 flex flex-col">
-                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Buluttaki Geçmiş</h3>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Cihazdaki Son 10 Kayıt</h3>
+                    <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Bulut Senkronize</span>
+                </div>
                 <div id="logList" class="space-y-3 max-h-[220px] overflow-y-auto pr-1 no-scrollbar flex-1">
-                    <div class="text-center text-slate-400 text-sm py-4">Veriler yükleniyor...</div>
+                    <!-- Yerel hafızadan anlık doldurulur -->
                 </div>
             </section>
         </div>
@@ -172,7 +174,7 @@
                         <i class="fa-solid fa-robot text-sm"></i>
                     </div>
                     <div class="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 max-w-[80%] anonymity leading-relaxed">
-                        Merhaba, ben bebeğinizin kişisel sağlık ve gelişim asistanıyım. Tüm uyku, beslenme ve aşı geçmişine hakimim. Merak ettiğiniz tıbbi konuları veya ek gıda tariflerini bana sorabilirsiniz.
+                        Merhaba, ben bebeğinizin kişisel sağlık ogelişim asistanıyım. Tüm uyku, beslenme ve aşı geçmişine hakimim. Merak ettiğiniz her şeyi bana sorabilirsiniz.
                     </div>
                 </div>
             </div>
@@ -191,7 +193,7 @@
             </div>
         </div>
 
-        <!-- ================= MODALLER (Premium Alt Katman Tasarımı) ================= -->
+        <!-- ================= MODALLER ================= -->
         <!-- Uyku Modalı -->
         <div id="sleepModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 shadow-2xl border-t border-white">
@@ -271,7 +273,7 @@
             </div>
         </div>
 
-        <!-- ================= PREMIUM ALT GEZİNTİ BARBARI (iOS BLUR) ================= -->
+        <!-- ================= PREMIUM ALT GEZİNTİ BARBARI ================= -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-slate-100 h-20 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-3xl shadow-lg">
             <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center text-slate-400 focus:outline-none w-16 h-12">
                 <i id="navDailyIcon" class="fa-solid fa-baby text-lg text-blue-500"></i>
@@ -296,11 +298,11 @@
 
         let state = {
             isSleeping: false,
-            logs: [],
+            // 1. KRİTİK ADIM: Uygulama açıldığı an bulutu beklemeden doğrudan yerel hafızayı yükler (Sıfır Gecikme)
+            logs: JSON.parse(localStorage.getItem('baby_logs')) || [], 
             chatHistory: [] 
         };
 
-        // İstemci Tarafı Statik Haftalık Gelişim ve Trik Veritabanı (Maksimum Performans)
         const DEV_TRICKS = {
             11: { title: "Sosyal Gülücükler ve Takip", text: "Bebeğiniz sizi gözleriyle daha pürüzsüz takip eder. Trik: Yüzünüzü 20-30 cm yaklaştırıp konuşun, dil çıkarma taklitleri yapın." },
             12: { title: "Ellerin Keşfi ve Kavrama", text: "Ellerini birleştirip inceleyebilir. Trik: Avucuna hafif çıngıraklar yerleştirerek kavrama refleksini ve işitsel koordinasyonu destekleyin." },
@@ -334,7 +336,6 @@
             { id: 21, month: 13, name: "Menenjit A-C-W-Y (Pekiştirme)", desc: "Dörtlü grup menenjit aşısının son hatırlatma dozu.", isPrivate: true }
         ];
 
-        // Gelişim Triklerini Hesaplayan ve Arayüze Basan Fonksiyon
         function calculateAgeAndTricks() {
             const birth = new Date(BABY_BIRTH_DATE);
             const now = new Date();
@@ -344,7 +345,6 @@
 
             document.getElementById('babyAgeBadge').innerText = `${diffDays} Günlük (${diffWeeks} Haftalık)`;
 
-            // İlgili haftaya ait trik lookup mekanizması
             const trick = DEV_TRICKS[diffWeeks] || { 
                 title: "İnteraktif Büyüme Dönemi", 
                 text: "Bebeğiniz hızla büyüyor. Motor kas gelişimi için gün içinde bol bol ten teması ve sakin ses tonuyla masallar anlatmaya devam edin." 
@@ -432,15 +432,23 @@
             });
         }
 
+        // 2. KRİTİK ADIM: Arka planda çalışır, arayüzü engellemez. Buluttan gelen verileri sadece son 10 adetle kırpar.
         async function fetchLogs() {
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
-                state.logs = await response.json();
-                updateUI();
-                analyzeWithAI();
+                const cloudLogs = await response.json();
+                
+                if (Array.isArray(cloudLogs)) {
+                    // Cihaz hafızasının şişmesini önlemek için sadece son 10 kaydı filtreleyip saklar
+                    state.logs = cloudLogs.slice(-10);
+                    localStorage.setItem('baby_logs', JSON.stringify(state.logs));
+                    updateUI();
+                    analyzeWithAI();
+                    document.getElementById('statusDesc').innerText = "Bulut senkronizasyonu güncel.";
+                }
             } catch (e) {
-                console.error("Veri çekme hatası:", e);
-                document.getElementById('logList').innerHTML = `<div class="text-center text-rose-500 text-sm py-4">Veritabanı bağlantı hatası.</div>`;
+                console.error("Arka plan senkronizasyon hatası:", e);
+                document.getElementById('statusDesc').innerText = "Çevrimdışı mod. Değişiklikler yerel olarak işleniyor.";
             }
         }
 
@@ -449,13 +457,13 @@
             list.innerHTML = '';
             
             if (state.logs.length === 0) {
-                list.innerHTML = `<div class="text-center text-slate-400 text-xs font-semibold py-8">Henüz bulutta bir kayıt girilmedi.</div>`;
+                list.innerHTML = `<div class="text-center text-slate-400 text-xs font-semibold py-8">Henüz bir kayıt girilmedi.</div>`;
                 return;
             }
 
             state.logs.slice().reverse().forEach(log => {
                 const div = document.createElement('div');
-                div.className = "bg-white border border-slate-100 p-4 rounded-2xl flex justify-between items-center shadow-premium smooth-transition animate-fade-in";
+                div.className = "bg-white border border-slate-100 p-4 rounded-2xl flex justify-between items-center shadow-premium smooth-transition";
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-slate-50 rounded-xl text-slate-600">
@@ -475,6 +483,13 @@
             if (lastLog) {
                 document.getElementById('lastEventTime').innerText = `Son Giriş: ${lastLog.time}`;
             }
+        }
+
+        function getIcon(type) {
+            if (type === 'sleep') return 'fa-solid fa-moon text-indigo-500';
+            if (type === 'feed') return 'fa-solid fa-baby-carriage text-emerald-500';
+            if (type === 'doctor') return 'fa-solid fa-user-md text-rose-500';
+            return 'fa-solid fa-toilet-paper text-amber-500';
         }
 
         function openModal(id) { 
@@ -508,11 +523,24 @@
             setDefaultTime('doctorTime');
         }
 
+        // 3. KRİTİK ADIM: Kaydet butonuna basıldığı an veriyi anlık ekrana basar, ardından arka planda buluta gönderir.
         async function saveLog(type, title, customTime) {
             const now = new Date();
             const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
             const finalTime = customTime || now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
             
+            // Yerel diziye anlık ekleme yapılıyor (Gecikmesiz Arayüz)
+            state.logs.push({ type, title, time: finalTime, date: dateStr });
+            
+            // Eğer yerel hafıza 10 kaydı geçerse en eskiyi siler, şişme yapmaz
+            if (state.logs.length > 10) {
+                state.logs = state.logs.slice(-10);
+            }
+            
+            localStorage.setItem('baby_logs', JSON.stringify(state.logs));
+            updateUI();
+            analyzeWithAI(); // Tahmin motorunu anlık yerel veriyle tetikler
+
             const payload = {
                 action: "save_log",
                 type: type,
@@ -520,18 +548,15 @@
                 time: finalTime,
                 date: dateStr
             };
-            
-            state.logs.push({ type, title, time: finalTime, date: dateStr });
-            updateUI();
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
+                // Arka planda buluta gönderme işlemi (Asenkron - Engellemesiz)
+                fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                setTimeout(fetchLogs, 1500); 
             } catch (e) {
-                console.error("Kaydetme hatası:", e);
+                console.error("Arka plana veri gönderim hatası:", e);
             }
         }
 
@@ -611,7 +636,7 @@
                 document.getElementById('nextActionTime').innerText = `Sonraki Uyku: ${result.next_sleep || '--:--'}`;
             } catch (e) {
                 console.error("AI Hatası:", e);
-                document.getElementById('statusDesc').innerText = "Rutin takibiniz güvenle yapılıyor. Tahmin motoru beklemede.";
+                document.getElementById('statusDesc').innerText = "Çevrimdışı mod. Tahmin motoru beklemede.";
             }
         }
 
@@ -688,15 +713,10 @@
             }
         }
 
-        document.getElementById('chatInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-
-        // Sayfa İlk Açıldığında Çalışacak Tetikleyiciler
-        calculateAgeAndTricks();
-        fetchLogs();
+        // Uygulama Tetikleyicileri Sıralaması (Hız İçin Optimize Edildi)
+        updateUI(); // 1. Önce cihazdaki eski 10 veriyi anlık ekrana basar (Bekleme yok)
+        calculateAgeAndTricks(); // 2. Yaş ve trikleri hesaplar
+        fetchLogs(); // 3. En son buluttaki güncel verileri arkada sessizce senkronize eder
     </script>
 </body>
 </html>
