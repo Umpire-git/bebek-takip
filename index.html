@@ -5,33 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BabyAI - Premium Bebek Takip Sistemi</title>
     
-    <!-- iOS PWA Konfigürasyonu -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BabyAI">
     
-    <!-- Üst Düzey UI Kütüphaneleri -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
         tailwind.config = {
-            darkMode: 'media', // Sistem ayarlarına (Koyu/Açık Tema) tam otomatik adaptasyon
+            darkMode: 'media',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    boxShadow: { 
-                        'premium': '0 10px 30px -3px rgba(0, 0, 0, 0.03)', 
-                        'card': '0 20px 40px -4px rgba(0, 0, 0, 0.04)' 
-                    }
+                    boxShadow: { 'premium': '0 10px 30px -3px rgba(0, 0, 0, 0.03)', 'card': '0 20px 40px -4px rgba(0, 0, 0, 0.04)' }
                 }
             }
         }
     </script>
 
     <style>
-        body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        body { background-color: #F8F9FA; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -43,16 +38,13 @@
 </head>
 <body class="flex justify-center min-h-screen bg-[#F8F9FA] dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- Ana Cihaz Çerçevesi -->
     <div class="w-full max-w-md bg-[#F8F9FA] dark:bg-slate-950 flex flex-col min-h-screen relative pb-20 shadow-premium border-x border-slate-100/10">
         
         <!-- ================= SEKME 1: GÜNLÜK TAKİP ================= -->
         <div id="dailyTab" class="tab-content active min-h-screen">
-            <!-- İllüstrasyon Katmanlı Dinamik Durum Paneli -->
             <header class="p-6 pt-8 pb-3">
                 <div id="statusCard" class="bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/10">
                     
-                    <!-- Vektörel İllüstrasyon Katmanları -->
                     <div class="absolute inset-0 pointer-events-none z-0">
                         <div id="illuAwake" class="absolute inset-0" style="display: block; opacity: 1;">
                             <i class="fa-solid fa-sun text-8xl text-amber-200/20 absolute -right-2 -top-2" style="animation: spin 25s linear infinite;"></i>
@@ -68,7 +60,6 @@
                         </div>
                     </div>
 
-                    <!-- Ön Plan Metin İçeriği -->
                     <div class="z-10 w-full">
                         <div class="flex justify-between items-start">
                             <div>
@@ -90,9 +81,8 @@
                 </div>
             </header>
 
-            <!-- Gelişim Trikleri -->
             <section class="px-6 mb-4">
-                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-premium transition-colors duration-300">
+                <div class="bg-white border dark:bg-slate-900 border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-premium">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Bugünün Gelişim Notu & Trikler</h4>
                         <span id="babyAgeBadge" class="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-[10px] font-black px-2.5 py-1 rounded-lg">--</span>
@@ -107,7 +97,6 @@
                 </div>
             </section>
 
-            <!-- Hızlı Kayıt Butonları -->
             <section class="px-6 mb-6">
                 <h3 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 mb-3 uppercase tracking-wider">Hızlı Kayıt</h3>
                 <div class="grid grid-cols-3 gap-4">
@@ -126,7 +115,6 @@
                 </div>
             </section>
 
-            <!-- Cihazdaki Son 10 Kayıt -->
             <section class="flex-1 px-6 mb-6 flex flex-col">
                 <h3 class="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">Cihazdaki Son 10 Kayıt</h3>
                 <div id="logList" class="space-y-3 max-h-[160px] overflow-y-auto pr-1 no-scrollbar flex-1"></div>
@@ -140,7 +128,7 @@
                 <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Aşı takvimi ve doktor kontrolleri</p>
             </header>
             <main class="flex-1 px-6 space-y-6">
-                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-[2rem] shadow-premium space-y-3">
+                <div class="bg-white border dark:bg-slate-900 border-slate-100 dark:border-slate-800 p-5 rounded-[2rem] shadow-premium space-y-3">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2"><i class="fa-solid fa-user-md text-rose-500 bg-rose-50 dark:bg-rose-950/40 p-2 rounded-xl"></i> Doktor Muayenesi</h3>
                         <button onclick="openDoctorModal()" class="bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-2 rounded-xl active:scale-95 smooth-transition">Kayıt Ekle</button>
@@ -164,15 +152,11 @@
                 <button onclick="clearChat()" class="text-slate-400 dark:text-slate-500 hover:text-rose-500 p-2 bg-slate-50 dark:bg-slate-800 rounded-xl"><i class="fa-solid fa-trash-can text-md"></i></button>
             </header>
             <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[calc(100vh-290px)] no-scrollbar bg-slate-50/50 dark:bg-slate-950/40"></div>
-            
-            <!-- Hızlı Soru Kısayolları -->
             <div class="px-6 py-2 overflow-x-auto flex gap-2 no-scrollbar bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-slate-800 shrink-0 transition-colors duration-300">
                 <button onclick="quickAsk('Genel gelişim analizi yapar mısın?')" class="shrink-0 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-2 rounded-xl border border-purple-100/50 dark:border-purple-900/50 active:scale-95 smooth-transition">📊 Gelişim Analizi</button>
                 <button onclick="quickAsk('Ek gıdaya geçiş sürecinde dikkat etmem gerekenler neler? Tarif verir misin?')" class="shrink-0 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-3 py-2 rounded-xl border border-emerald-100/50 dark:border-emerald-900/50 active:scale-95 smooth-transition">🥦 Ek Gıda Rehberi</button>
                 <button onclick="quickAsk('Son uyku verilerine göre uyku düzenimizi yorumlar mısın?')" class="shrink-0 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-2 rounded-xl border border-indigo-100/50 dark:border-indigo-900/50 active:scale-95 smooth-transition">😴 Uyku Düzeni</button>
             </div>
-            
-            <!-- Giriş Çubuğu -->
             <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2 items-center shrink-0 transition-colors duration-300">
                 <input id="chatInput" type="text" placeholder="Asistana medikal veya gelişim sorusu yöneltin..." class="flex-1 p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-purple-500/20">
                 <button onclick="sendChatMessage()" class="w-11 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center shadow-md active:scale-95 shrink-0"><i class="fa-solid fa-paper-plane text-xs"></i></button>
@@ -180,12 +164,12 @@
         </div>
 
         <!-- ================= MODALLER ================= -->
-        <!-- Uyku Modalı -->
+        <!-- Uyku Modalı (Varsayılan Renk Kilitlendi) -->
         <div id="sleepModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 border-t border-white dark:border-slate-800 transition-colors duration-300">
                 <div class="flex justify-between items-center"><h3 id="sleepModalTitle" class="text-lg font-black text-slate-800 dark:text-slate-200">Uyku Kaydı</h3><button onclick="closeModal('sleepModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
                 <input id="sleepTime" type="time" class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-300">
-                <button id="sleepSubmitBtn" onclick="executeSleepToggle()" class="w-full text-white font-bold p-4 rounded-2xl text-sm shadow-md smooth-transition">Kaydet</button>
+                <button id="sleepSubmitBtn" onclick="executeSleepToggle()" class="w-full bg-blue-600 dark:bg-blue-700 text-white font-bold p-4 rounded-2xl text-sm shadow-md smooth-transition">Kaydet</button>
             </div>
         </div>
 
@@ -214,7 +198,7 @@
                         <label class="block text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Mama Miktarı (cc / ml)</label>
                         <input id="feedingAmount" type="number" placeholder="Örn: 90" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-bold text-gray-700 dark:text-slate-300">
                     </div>
-                    <button onclick="executeFeedingSave()" class="w-full bg-emerald-600 text-white font-bold p-4 rounded-2xl text-sm shadow-md active:scale-95 smooth-transition">Beslenmeyi Kaydet</button>
+                    <button onclick="executeFeedingSave()" class="w-full bg-emerald-600 dark:bg-emerald-700 text-white font-bold p-4 rounded-2xl text-sm shadow-md active:scale-95 smooth-transition">Beslenmeyi Kaydet</button>
                 </div>
             </div>
         </div>
@@ -225,9 +209,9 @@
                 <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Bez Değişimi</h3><button onclick="closeModal('diaperModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
                 <input id="diaperTime" type="time" class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold text-gray-700 dark:text-slate-300">
                 <div class="grid grid-cols-3 gap-3">
-                    <button onclick="saveDiaper('Çiş')" class="bg-amber-50 text-amber-700 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Sadece Çiş</button>
-                    <button onclick="saveDiaper('Kaka (Sarı)')" class="bg-amber-50 text-amber-700 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Sarı)</button>
-                    <button onclick="saveDiaper('Kaka (Yeşil)')" class="bg-amber-50 text-amber-700 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Yeşil)</button>
+                    <button onclick="saveDiaper('Çiş')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Sadece Çiş</button>
+                    <button onclick="saveDiaper('Kaka (Sarı)')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Sarı)</button>
+                    <button onclick="saveDiaper('Kaka (Yeşil)')" class="bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-extrabold p-3.5 rounded-2xl border border-amber-100/10 text-xs">Kaka (Yeşil)</button>
                 </div>
             </div>
         </div>
@@ -246,12 +230,11 @@
                         <input id="docWeight" type="number" placeholder="Kilo (gr)" class="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold focus:outline-none">
                     </div>
                     <textarea id="docNotes" placeholder="Doktor notları, tanı veya tıbbi öneriler..." class="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-2xl text-xs h-24 focus:outline-none"></textarea>
-                    <button onclick="saveDoctorVisit()" class="w-full bg-rose-500 text-white font-bold p-4 rounded-2xl text-sm shadow-md">Muayeneyi Kaydet</button>
+                    <button onclick="saveDoctorVisit()" class="w-full bg-rose-500 dark:bg-rose-600 text-white font-bold p-4 rounded-2xl text-sm shadow-md">Muayeneyi Kaydet</button>
                 </div>
             </div>
         </div>
 
-        <!-- ================= PREMIUM ALT GEZİNTİ BARBARI ================= -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 h-20 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-3xl shadow-lg transition-colors duration-300">
             <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center text-slate-400 w-16 h-12"><i id="navDailyIcon" class="fa-solid fa-baby text-lg text-blue-500"></i><span id="navDailyText" class="text-[9px] font-extrabold mt-1 text-blue-600 uppercase tracking-tight">Günlük</span></button>
             <button onclick="switchTab('health')" class="flex flex-col items-center justify-center text-slate-400 w-16 h-12"><i id="navHealthIcon" class="fa-solid fa-heart-pulse text-lg"></i><span id="navHealthText" class="text-[9px] font-extrabold mt-1 uppercase tracking-tight">Sağlık</span></button>
@@ -260,7 +243,7 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz00ELQyBVRua7CJuF4T76_oDXjYa7LRW4oMLFQ0C2CWZphZvDfdiIX8FDxGCQX8-4V/exec"; 
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW_owYbf49vL47KixQmJPJJevgb23yzKTQ0RpXHkxVW0aRI3cesI4cFzYvvk2kN2Un/exec"; 
         const BABY_BIRTH_DATE = "2026-04-17"; 
 
         let state = { isSleeping: false, logs: JSON.parse(localStorage.getItem('baby_logs')) || [], chatHistory: [] };
@@ -364,19 +347,38 @@
             
             state.logs.slice().reverse().forEach(log => {
                 const div = document.createElement('div');
-                div.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl flex justify-between items-center shadow-premium transition-colors duration-300";
+                div.className = "bg-white border dark:bg-slate-900 border-slate-100 dark:border-slate-800 p-4 rounded-2xl flex justify-between items-center shadow-premium transition-colors duration-300";
                 div.innerHTML = `<div class="flex items-center gap-3"><div class="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl text-slate-600 dark:text-slate-400"><i class="${getIcon(log.type)}"></i></div><div><span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">${log.title}</span><p class="text-[10px] font-bold text-slate-400 mt-0.5">${log.time}</p></div></div><span class="text-[10px] font-black text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 px-2 py-1 rounded-md">${log.date}</span>`;
                 list.appendChild(div);
             });
             if (state.logs[state.logs.length - 1]) document.getElementById('lastEventTime').innerText = `Son Giriş: ${state.logs[state.logs.length - 1].time}`;
             
             syncSleepCardVisuals();
-            analyzeWithAI();
+        }
+
+        function getIcon(type) {
+            if (type === 'sleep') return 'fa-solid fa-moon text-indigo-500';
+            if (type === 'feed') return 'fa-solid fa-bottle-droplet text-emerald-500';
+            if (type === 'doctor') return 'fa-solid fa-user-md text-rose-500';
+            return 'fa-solid fa-toilet-paper text-amber-500';
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); if(id!=='sleepModal'&&id!=='doctorModal'&&id!=='feedingModal') setDefaultTime(id+'Time'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function openSleepModal() { openModal('sleepModal'); setDefaultTime('sleepTime'); }
+        
+        function openSleepModal() { 
+            openModal('sleepModal'); 
+            setDefaultTime('sleepTime'); 
+            const btn = document.getElementById('sleepSubmitBtn');
+            const title = document.getElementById('sleepModalTitle');
+            if (state.isSleeping) {
+                title.innerText = "Uyanma Kaydı"; btn.innerText = "Bebeği Uyandır";
+                btn.className = "w-full bg-amber-500 text-white font-extrabold p-4 rounded-2xl text-sm shadow-md active:scale-95 smooth-transition";
+            } else {
+                title.innerText = "Uyku Kaydı"; btn.innerText = "Bebeği Uyut";
+                btn.className = "w-full bg-indigo-500 text-white font-extrabold p-4 rounded-2xl text-sm shadow-md active:scale-95 smooth-transition";
+            }
+        }
         
         function openDoctorModal() { 
             openModal('doctorModal'); 
@@ -442,7 +444,6 @@
         function saveDoctorVisit() {
             const dateVal = document.getElementById('doctorDateInput').value;
             const h = document.getElementById('docHeight').value.trim(), w = document.getElementById('docWeight').value.trim(), notes = document.getElementById('docNotes').value.trim();
-            
             if (!dateVal || (!h && !w && !notes)) return;
             
             const formattedDate = new Date(dateVal).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
@@ -470,7 +471,7 @@
         }
 
         function resetChatUI() {
-            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3 items-start"><div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300">Merhaba, ben BabyAI asistanı. Klinik ve rasyonel standartlarla ebeveynlik adımlarınızı analiz etmek için hazırım. Ek gıda, pediatri ve uyku düzeni süreçlerini sorabilirsiniz.</div></div>`;
+            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3 items-start"><div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300">Merhaba, ben BabyAI asistanı. Klinik ve rasyonel standartlarla ebeveynlik adımlarınızı analiz etmek için hazırım. Ek gıda, pediatri ve uyku düzeni süreçlerini sorabilirsiniz.</div></div>`;
         }
 
         function appendChatMessage(sender, text) {
@@ -517,7 +518,7 @@
 
         document.getElementById('chatInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') sendChatMessage(); });
 
-        calculateAgeAndTricks(); updateUI(); fetchLogs();
+        updateUI(); calculateAgeAndTricks(); fetchLogs();
     </script>
 </body>
 </html>
