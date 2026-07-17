@@ -69,7 +69,6 @@
                                 </div>
                                 <h2 id="statusTitle" class="text-3xl font-black mt-3 tracking-tight text-white">Uyanık</h2>
                             </div>
-                            <!-- Çökmeye neden olan eksik ikon DOM'a geri eklendi -->
                             <div class="bg-white/20 p-3 rounded-2xl shadow-sm backdrop-blur-md border border-white/10">
                                 <i id="statusIcon" class="fa-solid fa-sun text-2xl text-amber-300"></i>
                             </div>
@@ -79,7 +78,7 @@
                         </p>
                     </div>
                     <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-[11px] text-white/80 font-bold z-10">
-                        <span id="nextActionTime" class="flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> Sonraki Uyku: Analiz ediliyor...</span>
+                        <span id="nextActionTime" class="flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> Sonraki Uyku: Veri Bekleniyor...</span>
                         <span id="lastEventTime">Son Giriş: --:--</span>
                     </div>
                 </div>
@@ -330,7 +329,7 @@
             } else { state.isSleeping = false; }
 
             const card = document.getElementById('statusCard'), title = document.getElementById('statusTitle');
-            const icon = document.getElementById('statusIcon'); // Eksik ikon null hatasını önlemek için güvenli seçim
+            const icon = document.getElementById('statusIcon'); 
             const awakeIllu = document.getElementById('illuAwake'), sleepIllu = document.getElementById('illuSleep');
 
             if (state.isSleeping) {
@@ -424,6 +423,7 @@
             document.getElementById('feedingDuration').value = '';
         }
 
+        // ================= KRİTİK GÜNCELLEME: SIRALI VE EKSİKSİZ ZİNCİR =================
         async function saveLog(type, title, customTime, customDate) {
             const now = new Date(), dateStr = customDate || now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }), finalTime = customTime || now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
             
@@ -432,7 +432,8 @@
             localStorage.setItem('baby_logs', JSON.stringify(state.logs));
             updateUI();
             
-            document.getElementById('statusDesc').innerText = "Veri buluta işleniyor...";
+            document.getElementById('statusDesc').innerText = "Veritabanı senkronize ediliyor...";
+            document.getElementById('nextActionTime').innerText = "Sonraki Uyku: Analiz motoru çalışıyor...";
 
             const params = new URLSearchParams();
             params.append("action", "save_log");
@@ -444,11 +445,16 @@
             try {
                 const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
                 const resData = await response.json();
-                if(resData.status === "success") { fetchLogs(); } 
-                else { document.getElementById('statusDesc').innerText = "Kayıt reddedildi."; }
+                
+                if(resData.status === "success") { 
+                    await fetchLogs();          // Önce verileri buluttan güvenle çeker
+                    await analyzeWithAI();      // BAĞLANTI KURULDU: Ardından AI analizini başlatır
+                } else { 
+                    document.getElementById('statusDesc').innerText = "Kayıt sunucu tarafından reddedildi."; 
+                }
             } catch (e) { 
                 console.error("Kayıt hatası:", e); 
-                document.getElementById('statusDesc').innerText = "Yerel kayıt başarılı, bulut çevrimdışı.";
+                document.getElementById('statusDesc').innerText = "Yerel kayıt başarılı, bulut bağlantısı askıda.";
             }
         }
 
@@ -482,10 +488,19 @@
             try {
                 const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
                 const result = await response.json();
-                if (result.status === "error") { document.getElementById('statusDesc').innerText = "Yapay Zeka Hatası: " + result.message; return; }
-                document.getElementById('statusDesc').innerText = result.tip || "Analiz tamamlandı.";
+                
+                if (result.status === "error") { 
+                    document.getElementById('statusDesc').innerText = "Analiz Hatası: " + result.message; 
+                    return; 
+                }
+                
+                // TALEP EDİLEN KAPANIŞ: İşlem bittiğinde yapay zekanın resmi analiz cümlesini ekrana basar.
+                document.getElementById('statusDesc').innerText = "✅ Senkronizasyon Tamamlandı. " + (result.tip || "Gelişim verileri stabil.");
                 document.getElementById('nextActionTime').innerText = `Sonraki Uyku: ${result.next_sleep || '--:--'}`;
-            } catch (e) { document.getElementById('statusDesc').innerText = "Tahmin motoru sunucu yanıtı bekliyor."; }
+                
+            } catch (e) { 
+                document.getElementById('statusDesc').innerText = "Tahmin motoru sunucu yanıtı bekliyor."; 
+            }
         }
 
         function resetChatUI() {
@@ -537,7 +552,15 @@
 
         document.getElementById('chatInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') sendChatMessage(); });
 
-        calculateAgeAndTricks(); updateUI(); fetchLogs();
+        // SISTEM BAŞLATMA ZİNCİRİ
+        calculateAgeAndTricks(); 
+        updateUI(); 
+        
+        async function bootSystem() {
+            await fetchLogs();
+            await analyzeWithAI();
+        }
+        bootSystem();
     </script>
 </body>
 </html>
