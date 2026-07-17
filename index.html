@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="BabyAI">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -68,6 +68,10 @@
                                     <span class="text-[9px] font-extrabold uppercase tracking-wider text-white">Metrik Analiz</span>
                                 </div>
                                 <h2 id="statusTitle" class="text-3xl font-black mt-3 tracking-tight text-white">Uyanık</h2>
+                            </div>
+                            <!-- Çökmeye neden olan eksik ikon DOM'a geri eklendi -->
+                            <div class="bg-white/20 p-3 rounded-2xl shadow-sm backdrop-blur-md border border-white/10">
+                                <i id="statusIcon" class="fa-solid fa-sun text-2xl text-amber-300"></i>
                             </div>
                         </div>
                         <p id="statusDesc" class="text-xs text-white/90 mt-4 font-semibold leading-relaxed bg-black/10 p-3 rounded-2xl backdrop-blur-sm">
@@ -164,7 +168,6 @@
         </div>
 
         <!-- ================= MODALLER ================= -->
-        <!-- Uyku Modalı -->
         <div id="sleepModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 border-t border-white dark:border-slate-800 transition-colors duration-300">
                 <div class="flex justify-between items-center"><h3 id="sleepModalTitle" class="text-lg font-black text-slate-800 dark:text-slate-200">Uyku Kaydı</h3><button onclick="closeModal('sleepModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
@@ -173,7 +176,6 @@
             </div>
         </div>
 
-        <!-- Beslenme Modalı -->
         <div id="feedingModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-4 border-t border-white dark:border-slate-800 transition-colors duration-300">
                 <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Beslenme Girişi</h3><button onclick="closeModal('feedingModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-880 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
@@ -203,7 +205,6 @@
             </div>
         </div>
 
-        <!-- Bez Modalı -->
         <div id="diaperModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-5 border-t border-white dark:border-slate-800 transition-colors duration-300">
                 <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Bez Değişimi</h3><button onclick="closeModal('diaperModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
@@ -216,7 +217,6 @@
             </div>
         </div>
 
-        <!-- Doktor Modalı -->
         <div id="doctorModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end justify-center z-50">
             <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[2.5rem] p-6 space-y-4 border-t border-white dark:border-slate-800 transition-colors duration-300">
                 <div class="flex justify-between items-center"><h3 class="text-lg font-black text-slate-800 dark:text-slate-200">Doktor Muayenesi</h3><button onclick="closeModal('doctorModal')" class="text-slate-400 bg-slate-50 dark:bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div>
@@ -246,7 +246,6 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnd1htQnC3uhMBYkI4AqOgsS6rjvfWlN-G2DIUt7nSr2MGE-Fp-9GFyyb79k5aMWJG/exec"; 
         const BABY_BIRTH_DATE = "2026-04-17"; 
 
-        // Kilitlenmeyi önleyen zırhlı LocalStorage başlangıcı
         let localLogs = [];
         try { localLogs = JSON.parse(localStorage.getItem('baby_logs')) || []; } 
         catch (e) { localLogs = []; localStorage.removeItem('baby_logs'); }
@@ -267,7 +266,6 @@
             { id: 5, month: 2, name: "KPA (Zatürre 1. Doz)", desc: "Konjuge pnömokok aşısı.", isPrivate: false }
         ];
 
-        // Bu fonksiyon sunucuya bağlı değildir. 0.001 saniyede doğrudan cihazda hesaplanır.
         function calculateAgeAndTricks() {
             const birth = new Date(BABY_BIRTH_DATE), now = new Date();
             const diffDays = Math.floor(Math.abs(now - birth) / (1000 * 60 * 60 * 24)), diffWeeks = Math.floor(diffDays / 7);
@@ -320,7 +318,6 @@
                     state.logs = cloudLogs.slice(-10);
                     localStorage.setItem('baby_logs', JSON.stringify(state.logs));
                     updateUI();
-                    analyzeWithAI();
                 }
             } catch (e) { console.error("Senkronizasyon hatası:", e); }
         }
@@ -332,17 +329,22 @@
                 state.isSleeping = lastSleepLog.title.includes('Uyudu');
             } else { state.isSleeping = false; }
 
-            const card = document.getElementById('statusCard'), title = document.getElementById('statusTitle'), icon = document.getElementById('statusIcon');
+            const card = document.getElementById('statusCard'), title = document.getElementById('statusTitle');
+            const icon = document.getElementById('statusIcon'); // Eksik ikon null hatasını önlemek için güvenli seçim
             const awakeIllu = document.getElementById('illuAwake'), sleepIllu = document.getElementById('illuSleep');
 
             if (state.isSleeping) {
                 card.className = "bg-gradient-to-br from-slate-950 via-indigo-950 to-blue-900 text-slate-100 rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/5";
-                title.innerText = "Uykuda"; icon.className = "fa-solid fa-moon text-2xl text-indigo-400";
+                title.innerText = "Uykuda"; 
+                if(icon) icon.className = "fa-solid fa-moon text-2xl text-indigo-400";
+                
                 awakeIllu.style.display = 'none'; awakeIllu.style.opacity = '0';
                 sleepIllu.style.display = 'block'; sleepIllu.style.opacity = '1';
             } else {
                 card.className = "bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-[2.5rem] p-6 shadow-card smooth-transition overflow-hidden relative min-h-[195px] flex flex-col justify-between border border-white/10";
-                title.innerText = "Uyanık"; icon.className = "fa-solid fa-sun text-2xl text-amber-400";
+                title.innerText = "Uyanık"; 
+                if(icon) icon.className = "fa-solid fa-sun text-2xl text-amber-300";
+                
                 sleepIllu.style.display = 'none'; sleepIllu.style.opacity = '0';
                 awakeIllu.style.display = 'block'; awakeIllu.style.opacity = '1';
             }
@@ -422,7 +424,6 @@
             document.getElementById('feedingDuration').value = '';
         }
 
-        // ================= GÜVENLİK DUVARLARINI AŞAN "FORM DATA" İLETİŞİM PROTOKOLÜ =================
         async function saveLog(type, title, customTime, customDate) {
             const now = new Date(), dateStr = customDate || now.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }), finalTime = customTime || now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
             
@@ -433,7 +434,6 @@
             
             document.getElementById('statusDesc').innerText = "Veri buluta işleniyor...";
 
-            // CORS Engelini Kırmak İçin URLSearchParams Kullanımı
             const params = new URLSearchParams();
             params.append("action", "save_log");
             params.append("type", type);
@@ -489,7 +489,7 @@
         }
 
         function resetChatUI() {
-            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3 items-start"><div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300">Merhaba, ben BabyAI asistanı. Klinik ve rasyonel standartlarla ebeveynlik adımlarınızı analiz etmek için hazırım. Ek gıda, pediatri ve uyku düzeni süreçlerini sorabilirsiniz.</div></div>`;
+            document.getElementById('chatBox').innerHTML = `<div class="flex gap-3 items-start"><div class="w-9 h-9 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-sm"></i></div><div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-premium text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[80%] leading-relaxed transition-colors duration-300">Merhaba, ben BabyAI asistanı. Klinik ve rasyonel standartlarla ebeveynlik adımlarınızı analiz etmek için hazırım. Ek gıda, pediatri ve uyku düzeni süreçlerini sorabilirsiniz.</div></div>`;
         }
 
         function appendChatMessage(sender, text) {
@@ -537,10 +537,7 @@
 
         document.getElementById('chatInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') sendChatMessage(); });
 
-        // Arayüz başlar başlamaz Gelişim Trikleri anlık olarak ekrana basılır.
-        calculateAgeAndTricks(); 
-        updateUI(); 
-        fetchLogs();
+        calculateAgeAndTricks(); updateUI(); fetchLogs();
     </script>
 </body>
 </html>
