@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BabyAI - Bebek Takip Sistemi</title>
     
-    <!-- iOS PWA Meta Etiketleri -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BabyAI">
     
-    <!-- Tailwind CSS & Google Fonts & FontAwesome İkonları -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght=400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -39,7 +37,6 @@
         
         <!-- ================= SEKME 1: GÜNLÜK TAKİP ================= -->
         <div id="dailyTab" class="tab-content active flex flex-col min-h-screen pb-20">
-            <!-- Üst Durum Kartı (Yuppo Stili) -->
             <header class="p-6 pt-12 pb-4">
                 <div id="statusCard" class="bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-3xl p-6 shadow-sm border border-[#E3F2FD]/50 transition-all duration-500">
                     <div class="flex justify-between items-start">
@@ -61,7 +58,6 @@
                 </div>
             </header>
 
-            <!-- Orta Kontrol Paneli -->
             <main class="flex-1 px-6 space-y-6">
                 <div>
                     <h3 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Hızlı Kayıt</h3>
@@ -89,7 +85,6 @@
                     </div>
                 </div>
 
-                <!-- Buluttaki Kayıt Geçmişi -->
                 <div>
                     <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Buluttaki Geçmiş</h3>
                     <div id="logList" class="space-y-3 max-h-[250px] overflow-y-auto pr-1">
@@ -107,7 +102,6 @@
             </header>
 
             <main class="flex-1 px-6 space-y-6">
-                <!-- Muayene Ekleme Kartı -->
                 <div class="bg-white border border-gray-100 p-5 rounded-3xl shadow-sm space-y-3">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-gray-800 flex items-center gap-2">
@@ -118,12 +112,9 @@
                     <p class="text-xs text-gray-400 leading-relaxed">Muayene bulgularını, doktor tavsiyelerini ve gelişim verilerini kaydedebilirsiniz.</p>
                 </div>
 
-                <!-- Dinamik Aşı Listesi -->
                 <div class="space-y-3">
                     <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Aşı Takvimi</h3>
-                    <div id="vaccineList" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
-                        <!-- Javascript aracılığıyla dinamik doldurulur -->
-                    </div>
+                    <div id="vaccineList" class="space-y-3 max-h-[350px] overflow-y-auto pr-1"></div>
                 </div>
             </main>
         </div>
@@ -140,7 +131,6 @@
                 </button>
             </header>
 
-            <!-- Sohbet Mesaj Penceresi -->
             <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[calc(100vh-280px)]">
                 <div class="flex gap-3 items-start">
                     <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center shrink-0">
@@ -152,14 +142,12 @@
                 </div>
             </div>
 
-            <!-- Hızlı Soru Kısayolları -->
             <div class="px-6 py-2 overflow-x-auto flex gap-2 no-scrollbar bg-white border-t border-gray-50">
                 <button onclick="quickAsk('Genel gelişim analizi yapar mısın?')" class="shrink-0 bg-purple-50 text-purple-700 text-xs font-bold px-3 py-2 rounded-xl border border-purple-100">📊 Gelişim Analizi</button>
                 <button onclick="quickAsk('Ek gıdaya geçiş sürecinde dikkat etmem gerekenler neler? Tarif verir misin?')" class="shrink-0 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-2 rounded-xl border border-emerald-100">🥦 Ek Gıda Rehberi</button>
                 <button onclick="quickAsk('Son uyku verilerine göre uyku düzenimizi yorumlar mısın?')" class="shrink-0 bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-2 rounded-xl border border-indigo-100">😴 Uyku Düzeni</button>
             </div>
 
-            <!-- Mesaj Gönderme Giriş Çubuğu -->
             <div class="p-4 bg-white border-t border-gray-100 flex gap-2 items-center">
                 <input id="chatInput" type="text" placeholder="Asistana sorun..." class="flex-1 p-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
                 <button onclick="sendChatMessage()" class="w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center shadow-md ios-bounce shrink-0">
@@ -242,7 +230,7 @@
             </div>
         </div>
 
-        <!-- ================= ALT GEZİNTİ BARBARI (TAB BAR) ================= -->
+        <!-- ================= ALT GEZİNTİ BARBARI ================= -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-16 flex justify-around items-center z-40 max-w-md mx-auto">
             <button onclick="switchTab('daily')" class="flex flex-col items-center justify-center text-gray-400 focus:outline-none">
                 <i id="navDailyIcon" class="fa-solid fa-baby text-xl text-blue-500"></i>
@@ -262,8 +250,8 @@
 
     <script>
         // ================= AYARLAR VE GLOBAL STATE =================
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzznHUz3GoU0iuiaSOH5xeUpOHEd72ehAN3Iq3bC9tB9WZJRXk45H2euOMW8Y2okV33/exec"; 
-        const BABY_BIRTH_DATE = "2026-04-17"; 
+        const APPS_SCRIPT_URL = "APPS_SCRIPT_WEB_UYGULAMA_URL_BURAYA"; 
+        const BABY_BIRTH_DATE = "2026-04-01"; 
 
         let state = {
             isSleeping: false,
@@ -473,7 +461,6 @@
             updateUI();
 
             try {
-                // CORS engeline takılmamak ve HTTP OPTIONS tetiklememek için header belirtmeden basit bir POST atıyoruz.
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload)
@@ -539,7 +526,7 @@
             document.getElementById('docNotes').value = '';
         }
 
-        // ================= AI ANALİZ MOTORU (GÜVENLİ SERVER SORGULAMA) =================
+        // ================= AI ANALİZ MOTORU =================
         async function analyzeWithAI() {
             if (state.logs.length === 0) return;
 
@@ -550,15 +537,23 @@
                 });
                 
                 const result = await response.json();
-                document.getElementById('statusDesc').innerText = result.tip;
-                document.getElementById('nextActionTime').innerText = `Sonraki Uyku: ${result.next_sleep}`;
+                
+                // Sunucu hata döndüyse doğrudan hatayı yaz
+                if (result.status === "error") {
+                    document.getElementById('statusDesc').innerText = "Sunucu Hatası: " + result.message;
+                    document.getElementById('nextActionTime').innerText = "Sonraki Uyku: --:--";
+                    return;
+                }
+
+                document.getElementById('statusDesc').innerText = result.tip || "Tahmin alınamadı.";
+                document.getElementById('nextActionTime').innerText = `Sonraki Uyku: ${result.next_sleep || '--:--'}`;
             } catch (e) {
                 console.error("AI Hatası:", e);
-                document.getElementById('statusDesc').innerText = "Rutin takibiniz güvenle yapılıyor. AI tahmini alınamadı.";
+                document.getElementById('statusDesc').innerText = "Yerel sunucu/CORS engeli veya internet bağlantısı yok.";
             }
         }
 
-        // ================= AI ASİSTAN MOTORU (GÜVENLİ CHATBOT) =================
+        // ================= AI ASİSTAN MOTORU (CHATBOT) =================
         
         function appendChatMessage(sender, text) {
             const chatBox = document.getElementById('chatBox');
@@ -640,9 +635,15 @@
                 });
 
                 const data = await response.json();
-                const aiResponse = data.response;
-
                 document.getElementById('aiTyping').remove();
+
+                // Sunucuda oluşan hatayı ekrana yazdır
+                if (data.status === "error") {
+                    appendChatMessage('model', "Hata: " + data.message);
+                    return;
+                }
+
+                const aiResponse = data.response;
                 appendChatMessage('model', aiResponse);
 
                 state.chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
@@ -650,7 +651,7 @@
             } catch (e) {
                 console.error("Asistan bağlantı hatası:", e);
                 document.getElementById('aiTyping').remove();
-                appendChatMessage('model', "Asistan şu an yanıt veremiyor. Lütfen internet bağlantınızı kontrol edin.");
+                appendChatMessage('model', "İnternet bağlantı hatası veya yerel bilgisayarda CORS kısıtlaması.");
             }
         }
 
@@ -660,7 +661,6 @@
             }
         });
 
-        // Açılışta verileri çek
         fetchLogs();
     </script>
 </body>
