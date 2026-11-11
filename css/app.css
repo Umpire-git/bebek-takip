@@ -314,3 +314,74 @@ textarea.inp { min-height: 84px; resize: vertical; }
   #view { max-width: none; padding: 0; }
   .card, .list, .stat { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
 }
+
+/* ===== v1.1: çizgi ikonlar, tahmin halkası, akış kartı ===== */
+.ico { width: 22px; height: 22px; fill: none; stroke: var(--c, var(--brand)); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.tile.sm .ico { width: 18px; height: 18px; }
+.tile.lg .ico { width: 28px; height: 28px; }
+.tile { background: color-mix(in srgb, var(--c, var(--brand)) 13%, transparent); }
+body { background: radial-gradient(1200px 420px at 50% -180px, color-mix(in srgb, var(--brand) 13%, transparent), transparent 70%) no-repeat, var(--bg); }
+.card, .list, .stat, .quick button, .hub button { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 5%, transparent), 0 6px 20px rgba(29, 39, 51, .05); }
+:root[data-theme="dark"] .card, :root[data-theme="dark"] .list, :root[data-theme="dark"] .stat, :root[data-theme="dark"] .quick button, :root[data-theme="dark"] .hub button { box-shadow: 0 0 0 1px rgba(255, 255, 255, .05); }
+.card.tint { box-shadow: none; }
+
+.toast { display: flex; align-items: center; gap: 14px; }
+.toast button { color: var(--accent); font-weight: 750; }
+
+.hero { padding: 20px 20px 18px; border-radius: 28px; box-shadow: 0 14px 34px -14px color-mix(in srgb, var(--brand) 70%, transparent); }
+.hero.asleep { background: linear-gradient(150deg, #1d1b4b, #3b3893 55%, #6a67d8); box-shadow: 0 14px 34px -14px #3b3893; }
+.hero.s-now { background: linear-gradient(150deg, #7a4a12, #c9822b 55%, #f0a94e); box-shadow: 0 14px 34px -14px #c9822b; }
+.hero.s-late { background: linear-gradient(150deg, #7a2438, #c24a5f 55%, #ee7f6b); box-shadow: 0 14px 34px -14px #c24a5f; }
+.hero::after { right: -60px; top: -70px; width: 220px; height: 220px; background: rgba(255, 255, 255, .07); }
+.hero::before { content: ""; position: absolute; left: -50px; bottom: -80px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255, 255, 255, .05); }
+.hero .big { font-size: 40px; }
+.hero .top-row { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+.ring { width: 96px; height: 96px; flex: none; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 7; stroke-linecap: round; }
+.ring .bg { stroke: rgba(255, 255, 255, .18); }
+.ring .win { stroke: rgba(255, 255, 255, .45); stroke-linecap: butt; }
+.ring .fg { stroke: #fff; transition: stroke-dashoffset .6s; }
+.ring .mid { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-size: 11px; font-weight: 700; line-height: 1.15; }
+.ring .mid b { display: block; font-size: 19px; letter-spacing: -.02em; }
+.hero .predict { position: relative; z-index: 1; margin-top: 14px; background: rgba(255, 255, 255, .14); border-radius: 16px; padding: 11px 13px; display: flex; align-items: center; gap: 11px; font-size: 13.5px; }
+.hero .predict b { font-size: 15.5px; }
+.hero .predict .ico { stroke: #fff; flex: none; }
+.hero .actions { position: relative; z-index: 1; display: flex; gap: 8px; margin-top: 12px; }
+.hero .actions .hbtn { flex: 1; text-align: center; padding: 12px; background: #fff; color: #1d2733; border-radius: 14px; }
+.hero .actions .hbtn.alt { flex: none; background: rgba(255, 255, 255, .2); color: #fff; }
+.conf { display: inline-flex; gap: 3px; vertical-align: 1px; margin-left: 4px; }
+.conf i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .3; }
+.conf i.on { opacity: 1; }
+
+.flow { position: relative; }
+.flow .f { display: flex; align-items: center; gap: 12px; padding: 10px 14px; width: 100%; text-align: left; }
+.flow .f + .f { border-top: 1px solid var(--line); }
+.flow .f .tm { width: 62px; white-space: nowrap; font-weight: 750; font-variant-numeric: tabular-nums; font-size: 15px; }
+.flow .f .tm small { display: block; font-size: 10.5px; font-weight: 600; color: var(--ink3); }
+.flow .f.due .tm { color: var(--bad); }
+.flow .f .t { font-weight: 650; font-size: 14.5px; }
+.flow .f .s { font-size: 12.5px; color: var(--ink2); }
+.flow .f .go { font-size: 12.5px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); padding: 7px 11px; border-radius: 10px; white-space: nowrap; }
+
+.plan24 { position: relative; height: 40px; border-radius: 12px; background: var(--surface2); overflow: hidden; }
+.plan24 i { position: absolute; top: 6px; bottom: 6px; border-radius: 7px; background: var(--sleep); min-width: 3px; }
+.plan24 i.p { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--sleep) 55%, transparent) 0 5px, color-mix(in srgb, var(--sleep) 22%, transparent) 5px 10px); outline: 1.5px dashed color-mix(in srgb, var(--sleep) 70%, transparent); outline-offset: -1.5px; }
+.plan24 i.l { animation: pulse 1.6s infinite; }
+.plan24 em { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--bad); z-index: 2; }
+.plan24 em::after { content: ""; position: absolute; top: -3px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--bad); }
+
+.stack > .short { margin-top: 14px; }
+.short { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px; scrollbar-width: none; }
+.short::-webkit-scrollbar { display: none; }
+.short button { display: flex; align-items: center; gap: 8px; padding: 9px 13px 9px 9px; border-radius: 999px; background: var(--surface); font-size: 13.5px; font-weight: 650; white-space: nowrap; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent); }
+.short button .tile { width: 28px; height: 28px; border-radius: 50%; }
+.short button .ico { width: 16px; height: 16px; }
+.quick button { padding: 13px 2px 11px; border-radius: 20px; color: var(--ink); }
+.quick button .tile { border-radius: 50%; width: 46px; height: 46px; }
+.bigpick { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 20px 6px; border-radius: 20px; background: color-mix(in srgb, var(--c) 12%, transparent); font-weight: 700; font-size: 15px; }
+.bigpick span { font-size: 30px; }
+.bigpick:active { transform: scale(.96); }
+#nav button.on svg { stroke-width: 2.3; }
+.insight { border-left: 0; position: relative; padding-left: 16px; }
+.insight::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 4px; background: var(--c); }

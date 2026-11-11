@@ -1,6 +1,7 @@
 // Akıllı analiz motoru: kayıtları yaş normlarıyla karşılaştırıp öneri üretir (çevrimdışı çalışır).
 import { baby, recs, last, between, per, mine, correctedMonths } from './store.js';
 import { age, status, nextSleep, weekAvg, dayStats, latestGrowth, vaccineList, nextCheckup, suppToday, suppAdherence, foodsTried, allergenExposure, allergyNames, leapInfo, medWindow, foodInfo } from './calc.js';
+import { predictSleep } from './predict.js';
 import { DAY, HOUR, MIN, startOfDay, fmtTime, fmtDur, fmtNum, inDays, trLower, round1 } from './util.js';
 import { feverAdvice } from './data/health.js';
 import { feedNorm, ALLERGENS } from './data/nutrition.js';
@@ -57,11 +58,11 @@ export function insights() {
   if (mo < 6 && between(now - 7 * DAY, now, 'bottle').some((r) => r.kind === 'water')) add(62, 'warn', '🚰', '6 aydan önce su önerilmez', 'Anne sütü ve mama, sıcak havada bile sıvı ihtiyacını karşılar. Su, mideyi doldurup beslenmeyi azaltabilir.');
 
   // --- Uyku ---
-  const ns = nextSleep();
-  if (ns.from && !ns.st.asleep) {
-    const h = new Date().getHours();
-    if (now > ns.to + 20 * MIN && now - ns.st.since < 14 * HOUR) add(66, 'warn', '🥱', `Uyanıklık süresi uzadı: ${fmtDur(now - ns.st.since)}`, `Bu yaşta ideal uyanıklık süresi ${fmtDur(ns.norm.wake[0] * MIN)} – ${fmtDur(ns.norm.wake[1] * MIN)}. Aşırı yorulmadan uyku rutinine başlayın.`, 'hub/sleep');
-    else if (now > ns.from - 15 * MIN && now <= ns.to + 20 * MIN) add(64, 'sleep', '😴', 'Uyku penceresi açık', `${h >= 18 ? 'Gece uykusu' : 'Sıradaki uyku'} için ideal aralık: ${fmtTime(ns.from)} – ${fmtTime(ns.to)}. Uyku işaretlerini izleyin.`, 'hub/sleep');
+  const ns = nextSleep(), ps = predictSleep();
+  if (!ps.empty && !ps.asleep && ps.next) {
+    const n = ps.next, nm = n.kind === 'night' ? 'Gece uykusu' : n.idx != null ? `${n.idx + 1}. gündüz uykusu` : 'Sıradaki uyku';
+    if (ps.state === 'late') add(66, 'warn', '🥱', `Uyku zamanı geçti (${fmtDur(now - ps.since)} uyanık)`, `${nm} için ideal aralık ${fmtTime(n.from)}–${fmtTime(n.to)} idi. Aşırı yorgun bebek zor uyur; uyaranları azaltıp hemen yatırın.`, 'hub/sleep');
+    else if (ps.state === 'now' || ps.state === 'soon') add(64, 'sleep', '😴', ps.state === 'now' ? 'Uyku penceresi açık' : `${nm} ${Math.max(1, Math.round((n.from - now) / MIN))} dk sonra`, `İdeal aralık ${fmtTime(n.from)}–${fmtTime(n.to)}. ${ps.basis[0] || 'Esneme, göz ovuşturma gibi işaretleri izleyin.'}`, 'hub/sleep');
   }
   if (wk && wk.sleepH != null && wk.n >= 3) {
     const [lo, hi] = ns.norm.total;

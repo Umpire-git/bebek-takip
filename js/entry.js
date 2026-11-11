@@ -1,5 +1,6 @@
 // Kayıt ekleme/düzenleme formları ve zamanlayıcılar (uyku, emzirme, karın üstü)
 import { save, recs, addRec, updateRec, delRec, getRec, per, mine, age, last } from './store.js';
+import { OPT } from './types.js';
 import { TYPES, summary } from './types.js';
 import { on, openForm, toast, sheet, closeSheet } from './ui.js';
 import { foodsTried, allergyNames, foodInfo } from './calc.js';
@@ -52,7 +53,7 @@ export function openRecord(type, id, preset = {}) {
     onSave: (v) => {
       if (!v.ts) v.ts = Date.now();
       if (v.ts > Date.now() + 5 * MIN) { toast('Zaman gelecekte olamaz'); return false; }
-      if (type === 'sleep') { if (!v.end) { toast('Uyanma zamanını girin'); return false; } if (v.end <= v.ts) { toast('Uyanma, uyumadan sonra olmalı'); return false; } }
+      if (type === 'sleep') { if (!v.end) { toast('Uyanma zamanını girin'); return false; } if (v.end <= v.ts) { toast('Uyanma, uyumadan sonra olmalı'); return false; } if (v.end > Date.now() + 5 * MIN) { toast('Uyanma zamanı gelecekte olamaz'); return false; } }
       if (type === 'solid') v.foods = (v.foods || []).map((f) => foodInfo(f)?.n || cap(f.trim()));
       if (type === 'breast' && !v.left && !v.right) { v.left = null; v.right = null; }
       rec ? updateRec(id, v) : addRec(type, v);
@@ -121,8 +122,13 @@ on('breastMenu', () => {
 on('breastGo', (d) => { closeSheet(); timers().breast = { start: Date.now(), side: d.side, L: 0, R: 0, since: Date.now() }; save(); });
 
 // Tek dokunuşla hızlı kayıt
-on('quickDiaper', (d) => { addRec('diaper', { kind: d.kind }); toast('Bez kaydedildi ✓'); });
-on('suppGive', (d) => { addRec('supp', { name: d.name, dose: d.dose || null }); toast(`${d.name} verildi ✓`); });
+on('quickDiaper', (d) => { closeSheet(); const r = addRec('diaper', { kind: d.kind }); toast('Bez kaydedildi ✓', () => delRec(r.id)); });
+on('suppGive', (d) => { const r = addRec('supp', { name: d.name, dose: d.dose || null }); toast(`${d.name} verildi ✓`, () => delRec(r.id)); });
+on('quickBottle', (d) => { const r = addRec('bottle', { kind: d.kind, ml: Number(d.ml) }); toast(`${d.ml} ml kaydedildi ✓`, () => delRec(r.id)); });
+on('diaperMenu', () => {
+  sheet('Bez değişimi', `<div class="three">${[['wet', '💧', 'Islak'], ['dirty', '💩', 'Kirli'], ['both', '💧💩', 'İkisi']].map(([k, i, l]) => `<button class="bigpick c-diaper" data-act="quickDiaper" data-kind="${k}"><span>${i}</span>${l}</button>`).join('')}</div>
+    <button class="btn ghost block" style="margin-top:12px" data-act="pick" data-type="diaper">Renk, kıvam ve not ekle</button>`);
+});
 
 export const recRow = (r, withDay = false) => {
   const T = TYPES[r.type] || TYPES.note;

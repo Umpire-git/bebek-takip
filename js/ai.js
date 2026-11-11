@@ -3,6 +3,7 @@
 import { db, baby, recs, between, mine, per, correctedMonths } from './store.js';
 import { age, rangeStats, weekAvg, nextSleep, latestGrowth, vaccineList, nextCheckup, foodsTried, leapInfo, status, allergyNames } from './calc.js';
 import { TYPES, summary } from './types.js';
+import { predictSleep } from './predict.js';
 import { insights } from './insights.js';
 import { DAY, HOUR, MIN, fmtDate, fmtTime, fmtDur, fmtNum, round1, dayKey, trLower } from './util.js';
 import { feedNorm, RECIPES, RECIPE_KINDS, ALLERGENS, solidStageFor } from './data/nutrition.js';
@@ -48,6 +49,13 @@ export function buildContext() {
   L.push(`Yaş normu — uyku: toplam ${ns.norm.total.join('-')} sa/gün, uyanıklık aralığı ${ns.norm.wake.join('-')} dk, gündüz uykusu ${ns.norm.naps.join('-')} adet`);
   const fn = feedNorm(a.exactMonths, latestGrowth('weight')?.v);
   L.push(`Yaş normu — beslenme: ${fn.text}`);
+  const ps = predictSleep();
+  if (!ps.empty) {
+    const m = ps.model, hm = (x) => `${String(Math.floor(x / 60) % 24).padStart(2, '0')}:${String(Math.round(x % 60)).padStart(2, '0')}`;
+    if (m.samples.days >= 3 && !m.newborn) L.push(`Öğrenilen uyku düzeni (son ${m.samples.days} gün): sabah uyanış ~${hm(m.wakeClock)}, günde ${m.typicalN} gündüz uykusu, yatış ~${hm(m.bedClock)}`);
+    const up = ps.plan.filter((p) => !p.done && p.kind !== 'wake').map((p) => `${p.kind === 'night' ? 'gece uykusu' : (p.idx + 1) + '. gündüz uykusu'} ${p.live ? '(sürüyor, tahmini uyanış ' + fmtTime(p.end) + ')' : '≈ ' + fmtTime(p.start)}`);
+    if (up.length) L.push(`Uygulamanın bugünkü uyku tahmini: ${up.join('; ')}${ps.state ? ` (durum: ${{ early: 'henüz erken', soon: 'yaklaşıyor', now: 'pencere açık', late: 'gecikti' }[ps.state]})` : ''}`);
+  }
 
   L.push('\nSON 7 GÜN (günlük özet):');
   for (const d of rangeStats(7)) {

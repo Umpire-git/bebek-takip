@@ -10,6 +10,7 @@ Doğumdan okul öncesine kadar bebeğin beslenme, uyku, sağlık ve gelişimini 
 | **Sağlık** | T.C. Sağlık Bakanlığı aşı takvimi + özel aşılar, sağlam çocuk izlemleri ve randevular, WHO persentil eğrileri (kilo/boy/baş çevresi, prematüre düzeltmesi), takviye takibi, alerjiler, diş şeması, krem ve ürünler, acil rehber, yazdırılabilir doktor raporu |
 | **Beslenme** | Besin kataloğu, 3 gün kuralı, alerjen tanıştırma durumu, yasaklı besinler, gıda güvenliği, yaşa ve alerjilere göre filtrelenen 28 tarif |
 | **Gelişim & uyku** | Gelişim basamakları, gelişim atakları, yaşa göre uyku planı ve kişisel uyku penceresi tahmini, uyku sesleri, oyun ve ebeveyn rehberi |
+| **Uyku tahmini** | Bebeğin son günlerdeki kendi düzeninden (uyanıklık aralıkları, uyku süreleri, yatış ve uyanış saatleri) öğrenip yaş normlarıyla harmanlar; günün kalan uykularını, yatış saatini ve uyanma saatini tahmin eder, kısa/kaçan uykuya göre planı günceller |
 | **Analiz** | 7/14/30 günlük grafikler, yaş normlarıyla karşılaştırma |
 | **Asistan** | Cihazda çalışan kural tabanlı analiz motoru + isteğe bağlı Claude destekli sohbet (pediatri, çocuk gelişimi, diyetisyen ve gıda güvenliği bakışıyla, bebeğin verilerine göre) |
 
@@ -40,7 +41,9 @@ js/app.js              kabuk: yönlendirme, menü, ilk kurulum
 js/store.js            veri katmanı (localStorage)
 js/types.js            kayıt türleri ve form tanımları
 js/calc.js             türetilmiş hesaplar
+js/predict.js          uyku ve beslenme tahmin motoru
 js/insights.js         akıllı analiz kuralları
+js/icons.js            çizgi ikon seti
 js/ai.js               Claude bağlantısı, bağlam üretimi, çevrimdışı yanıtlar
 js/data/               bilgi tabanı (sağlık, gelişim, beslenme)
 js/views/              ekranlar

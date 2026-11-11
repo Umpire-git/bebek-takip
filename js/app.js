@@ -2,6 +2,7 @@
 import { db, save, onChange, baby, addBaby, hasLegacy, importLegacy } from './store.js';
 import { actions, on, chipClick, sheetOpen, toast, formHTML, readForm } from './ui.js';
 import { fmtClock, fmtDur, dayKey, esc } from './util.js';
+import { iconize } from './icons.js';
 import * as home from './views/home.js';
 import * as log from './views/log.js';
 import * as hub from './views/hub.js';
@@ -44,6 +45,7 @@ export function render() {
   renderNav(VIEWS[tab] ? (tab === 'settings' ? 'home' : tab) : 'home');
   $view.innerHTML = v.render(sub);
   v.mount?.($view, sub);
+  iconize($view);
   tick();
 }
 let lastRoute = null;

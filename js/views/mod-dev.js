@@ -5,6 +5,8 @@ import { on, sec, backBtn, seg, toast } from '../ui.js';
 import { esc, fmtTime, fmtDur, MIN, HOUR, round1, md, fmtDate, DAY, dayKey, rangeTxt } from '../util.js';
 import { MILESTONES, DOMAINS, LEAPS, PLAY_GUIDE, playGuideFor, SLEEP_TIPS, SLEEP_NORMS } from '../data/development.js';
 import * as sound from '../sound.js';
+import { predictSleep, CONF } from '../predict.js';
+import { planStrip, napName } from './home.js';
 
 const rerender = () => document.dispatchEvent(new Event('rerender'));
 const head = (title) => `${backBtn()}<h1 style="margin-bottom:14px">${title}</h1>`;
@@ -63,18 +65,21 @@ export function sleep() {
   const ns = nextSleep(), n = ns.norm, wk = weekAvg(7), a = age();
   const days = rangeStats(7).filter((d) => d.sleepMs);
   const sched = schedule(ns);
+  const ps = predictSleep(), nx = ps.next;
   let now_;
-  if (ns.st.asleep) now_ = `<div class="insight c-sleep"><span class="ic">🌙</span><div><div class="t">Şu an uyuyor · ${fmtDur(Date.now() - ns.st.since)}</div><div class="s">Uyanınca ana ekrandan “Uyandı”ya dokunun.</div></div></div>`;
-  else if (ns.from) { const late = Date.now() > ns.to; now_ = `<div class="insight c-${late ? 'warn' : 'sleep'}"><span class="ic">${late ? '🥱' : '⏰'}</span><div><div class="t">${late ? 'Uyku zamanı geçti' : `Sıradaki uyku: ${fmtTime(ns.from)} – ${fmtTime(ns.to)}`}</div><div class="s">Uyanıklık süresi: ${fmtDur(Date.now() - ns.st.since)}. ${ns.personal ? `Son günlerdeki kendi ortalaması ~${fmtDur(ns.personal * MIN)}; öneri buna göre ayarlandı.` : 'Öneri yaş ortalamasına göredir; kayıt arttıkça kişiselleşir.'}</div></div></div>`; }
-  else now_ = `<div class="insight c-sleep"><span class="ic">💡</span><div><div class="t">Uykuları kaydedin</div><div class="s">Ana ekrandaki “Uyudu / Uyandı” düğmesiyle kayıt tuttukça size özel uyku penceresi hesaplanır.</div></div></div>`;
+  if (ps.empty) now_ = `<div class="insight c-sleep"><span class="ic">💡</span><div><div class="t">Uykuları kaydedin</div><div class="s">Ana ekrandaki “Uyudu / Uyandı” düğmesiyle kayıt tuttukça uyku saatlerini bebeğinizin kendi düzenine göre tahmin ederim. 3 günlük kayıt yeterli bir başlangıçtır.</div></div></div>`;
+  else if (ps.asleep) now_ = `<div class="insight c-sleep"><span class="ic">🌙</span><div><div class="t">Uyuyor · tahmini uyanış ≈ ${fmtTime(nx.at)}</div><div class="s">Uyku süresi ${fmtDur(Date.now() - ps.since)}. ${CONF[nx.conf]}.</div></div></div>`;
+  else now_ = `<div class="insight c-${ps.state === 'late' ? 'bad' : ps.state === 'now' ? 'warn' : 'sleep'}"><span class="ic">${ps.state === 'late' ? '🥱' : '⏰'}</span><div><div class="t">${ps.state === 'late' ? 'Uyku zamanı geçti' : ps.state === 'now' ? 'Uyku penceresi şu an açık' : `${napName(nx)} ≈ ${fmtTime(nx.at)}`} · ${fmtTime(nx.from)}–${fmtTime(nx.to)}</div><div class="s">Uyanıklık süresi ${fmtDur(Date.now() - ps.since)}; bu uyku için hedef ~${fmtDur(nx.ww * MIN)}. ${CONF[nx.conf]}.${ps.basis.length ? ' ' + ps.basis.map(esc).join('. ') + '.' : ''}</div></div></div>`;
+  const planRows = ps.empty ? '' : ps.plan.map((p) => `<div class="item"><span class="tile sm c-sleep">${p.kind === 'wake' ? '☀️' : '🌙'}</span><span class="grow"><div class="t ${p.done ? 'muted' : ''}">${p.kind === 'wake' ? 'Sabah uyanışı' : napName(p)}</div><div class="s">${p.done ? 'Gerçekleşti' : p.live ? 'Sürüyor' : 'Tahmin'}${p.end && p.kind !== 'wake' ? ` · ${p.done ? '' : '~'}${fmtDur(p.end - p.start)}` : ''}${!p.done && !p.live && p.kind === 'night' ? ` · rutin ${fmtTime(p.start - 30 * MIN)}` : ''}</div></span><span class="b num ${p.done ? 'muted' : ''}">${p.done || p.live ? '' : '≈ '}${fmtTime(p.start)}${p.end && p.kind === 'nap' ? `<span class="faint" style="font-weight:500">–${fmtTime(p.end)}</span>` : ''}</span></div>`).join('');
   return `${head('Uyku Yardımcısı')}
   <div class="stack">${now_}
+  ${ps.empty ? '' : `<div class="card">${planStrip(ps)}</div>`}
   <div class="stats"><div class="stat"><div class="v">${n.total.join('–')}<small> sa</small></div><div class="k">Günlük hedef</div><div class="d">${wk?.sleepH != null ? `sizde ort. ${round1(wk.sleepH)} sa` : a.text}</div></div>
     <div class="stat"><div class="v">${rangeTxt(n.wake)}</div><div class="k">Uyanık kalma</div><div class="d">iki uyku arası</div></div>
     <div class="stat"><div class="v">${n.naps[0] === n.naps[1] ? n.naps[0] : n.naps.join('–')}</div><div class="k">Gündüz uykusu</div><div class="d">${wk?.naps != null ? `sizde ort. ${round1(wk.naps)}` : '&nbsp;'}</div></div>
     <div class="stat"><div class="v" style="font-size:17px;line-height:1.6">${n.bed}</div><div class="k">Yatış saati</div><div class="d">gece ${n.night.join('–')} sa</div></div></div>
   <div class="card tint c-sleep small">💡 ${esc(n.tip)}</div></div>
-  ${sched ? `${sec('Örnek gün planı', '<span class="tiny muted">07:00 uyanışa göre</span>')}<div class="list">${sched}</div>` : ''}
+  ${planRows ? `${sec('Bugünün uyku planı', '<span class="tiny muted">her kayıtta güncellenir</span>')}<div class="list">${planRows}</div>` : sched ? `${sec('Örnek gün planı', '<span class="tiny muted">07:00 uyanışa göre</span>')}<div class="list">${sched}</div>` : ''}
   ${sec('Uyku sesleri')}<div class="card stack"><div class="quick" style="grid-template-columns:repeat(3,1fr)">${sound.SOUNDS.map(([k, i, l]) => `<button data-act="snd" data-v="${k}" class="c-sleep" style="box-shadow:none;background:${sound.playing === k ? 'color-mix(in srgb,var(--sleep) 20%,transparent)' : 'var(--surface2)'}"><span class="tile">${sound.playing === k ? '⏸' : i}</span>${l}</button>`).join('')}</div>
     ${seg('sndMin', [['15', '15 dk'], ['30', '30 dk'], ['60', '1 sa'], ['0', 'Sürekli']], String(sndMin))}
     <p class="tiny muted">Sesi kısık tutun (duş sesi düzeyi, ≤50 dB) ve cihazı beşikten en az 2 metre uzağa koyun. ${sound.playing && sound.endsAt ? `Kapanış: ${fmtTime(sound.endsAt)}` : ''}</p></div>

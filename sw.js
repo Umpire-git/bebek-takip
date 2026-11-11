@@ -1,7 +1,7 @@
 // Çevrimdışı çalışma: uygulama kabuğunu önbelleğe alır. Sürüm değişince CACHE adını artırın.
-const CACHE = 'pitir-v1';
+const CACHE = 'pitir-v2';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
-  'js/app.js', 'js/store.js', 'js/util.js', 'js/ui.js', 'js/types.js', 'js/calc.js', 'js/insights.js', 'js/ai.js', 'js/entry.js', 'js/sound.js',
+  'js/app.js', 'js/store.js', 'js/util.js', 'js/ui.js', 'js/types.js', 'js/calc.js', 'js/insights.js', 'js/ai.js', 'js/entry.js', 'js/sound.js', 'js/icons.js', 'js/predict.js',
   'js/data/health.js', 'js/data/development.js', 'js/data/nutrition.js',
   'js/views/home.js', 'js/views/log.js', 'js/views/hub.js', 'js/views/stats.js', 'js/views/assistant.js', 'js/views/settings.js', 'js/views/mod-health.js', 'js/views/mod-dev.js', 'js/views/mod-food.js'];
 

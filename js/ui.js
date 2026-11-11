@@ -1,5 +1,6 @@
 // Arayüz altyapısı: eylem kaydı, sayfa (sheet), bildirim, form üretici, grafikler
 import { esc, toLocalInput, fromLocalInput, parseNum, fmtNum } from './util.js';
+import { iconize } from './icons.js';
 
 // --- Eylemler: HTML'de data-act="ad" ile bağlanır ---
 export const actions = {};
@@ -7,13 +8,14 @@ export const on = (name, fn) => { actions[name] = fn; };
 
 // --- Bildirim ---
 let toastTimer;
-export function toast(msg) {
+export function toast(msg, undo) {
   document.querySelector('.toast')?.remove();
   const el = document.createElement('div');
   el.className = 'toast'; el.textContent = msg;
+  if (undo) { const b = document.createElement('button'); b.textContent = 'Geri al'; b.onclick = () => { el.remove(); undo(); }; el.appendChild(b); }
   document.body.appendChild(el);
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.remove(), 2600);
+  toastTimer = setTimeout(() => el.remove(), undo ? 5000 : 2600);
 }
 
 // --- Sheet ---
@@ -26,6 +28,7 @@ export function sheet(title, bodyHTML, { wide = false } = {}) {
     <div class="sheet-body">${bodyHTML}</div></div>`;
   scrim.addEventListener('mousedown', (e) => { if (e.target === scrim) closeSheet(); });
   document.body.appendChild(scrim);
+  iconize(scrim);
   return scrim.querySelector('.sheet-body');
 }
 export function closeSheet(all = false) {
